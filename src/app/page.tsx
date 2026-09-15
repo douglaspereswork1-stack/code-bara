@@ -81,18 +81,29 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* right — capybara illustration */}
-          <div className="relative lg:h-[520px] flex items-center justify-center">
-            {/* glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#3B82F6]/10 via-transparent to-[#8B5CF6]/10 rounded-3xl blur-2xl pointer-events-none" />
+          {/* right — capybara na água (referência) */}
+          <div className="relative lg:h-[560px] flex items-end justify-center overflow-visible">
+            {/* lago + pôr do sol */}
+            <div className="absolute inset-0 -mx-6 lg:mx-0 rounded-3xl overflow-hidden pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1A2B6B] via-[#0D1A3A] to-[#050914]" />
+              <div className="absolute bottom-0 left-0 right-0 h-[42%] bg-gradient-to-t from-[#0A4A6B]/40 via-[#1A6B8A]/20 to-transparent" />
+              <div className="absolute bottom-[38%] right-[18%] w-20 h-20 rounded-full bg-gradient-to-br from-[#FACC15] to-[#F97316] blur-[1px] opacity-80" />
+              <div className="absolute bottom-[36%] left-0 right-0 h-px bg-[#22D3EE]/30 blur-[1px]" />
+              {/* ondulação */}
+              <div className="absolute bottom-[18%] left-1/2 -translate-x-1/2 w-[80%] h-[60px] rounded-[50%] bg-[#22D3EE]/10 blur-xl" />
+              <div className="absolute bottom-[14%] left-1/2 -translate-x-1/2 w-[70%] h-[40px] rounded-[50%] border border-[#22D3EE]/10" />
+              {/* folhagens */}
+              <div className="absolute -left-6 bottom-0 w-32 h-32 bg-gradient-to-tr from-[#0A2F1A]/60 to-transparent rounded-full blur-xl" />
+              <div className="absolute -right-6 bottom-0 w-40 h-40 bg-gradient-to-tl from-[#1A3A2A]/50 to-transparent rounded-full blur-xl" />
+            </div>
             {/* floating cards */}
-            <div className="absolute top-6 left-6 hidden lg:flex flex-col gap-1.5 p-3 rounded-2xl bg-[#0D1528]/90 backdrop-blur border border-[#22D3EE]/20 shadow-xl">
+            <div className="absolute top-4 left-2 lg:left-6 hidden lg:flex flex-col gap-1.5 p-3 rounded-2xl bg-[#0D1528]/95 backdrop-blur border border-[#22D3EE]/25 shadow-xl z-10">
               <div className="flex items-center gap-2 text-xs text-[#94A3B8]"><span className="w-6 h-6 rounded bg-[#3B82F6]/20 flex items-center justify-center">📁</span> src <span className="ml-auto text-[10px] text-[#64748B]">▼</span></div>
               <div className="pl-4 text-xs text-[#94A3B8] flex flex-col gap-1">
                 <span>📁 components</span><span>📁 pages</span><span>📄 utils</span><span>📄 App.tsx</span>
               </div>
             </div>
-            <div className="absolute top-10 right-4 hidden lg:grid grid-cols-3 gap-2 p-3 rounded-2xl bg-[#0D1528]/90 backdrop-blur border border-[#22D3EE]/20 shadow-xl">
+            <div className="absolute top-6 right-2 lg:right-4 hidden lg:grid grid-cols-3 gap-2 p-3 rounded-2xl bg-[#0D1528]/95 backdrop-blur border border-[#22D3EE]/25 shadow-xl z-10">
               {[
                 { bg: 'bg-[#F97316]', label: '5', sub: 'HTML' },
                 { bg: 'bg-[#3B82F6]', label: '3', sub: 'CSS' },
@@ -108,21 +119,14 @@ export default function LandingPage() {
               ))}
             </div>
 
-            {/* capybara PNG recortada */}
-            <div className="relative">
-              <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[520px] h-[160px] bg-[#22D3EE]/25 blur-3xl rounded-full pointer-events-none" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#22D3EE]/5 via-transparent to-transparent rounded-3xl pointer-events-none" />
-              <div className="relative w-[360px] lg:w-[520px] h-[400px] lg:h-[460px] flex items-center justify-center">
-                <img
-                  src="/capivara-hero.png"
-                  alt="Capivara na boia com laptop"
-                  className="relative w-full h-full object-contain drop-shadow-2xl"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none peer-[img[style*='display: none']]:flex hidden">
-                  <Capybara size={240} />
-                </div>
-              </div>
+            {/* capybara GIGANTE */}
+            <div className="relative z-10 w-full max-w-[560px] h-[480px] lg:h-[520px] flex items-end justify-center pb-6">
+              <img
+                src="/capivara-hero.png"
+                alt="Capivara na boia com laptop"
+                className="w-full h-full object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+                style={{ filter: 'drop-shadow(0 0 20px rgba(34,211,238,0.15))' }}
+              />
             </div>
           </div>
         </div>
