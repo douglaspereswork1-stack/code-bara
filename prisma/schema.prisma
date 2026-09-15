@@ -1,0 +1,253 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTH ====================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  passwordHash  String?
+  provider      String    @default("email")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  progress      Progress[]
+  quizResults   QuizResult[]
+  streak        Streak?
+  xp            XpRecord?
+  badges        UserBadge[]
+  enrollments   Enrollment[]
+  reviewsGiven  CodeReview[] @relation("Reviewer")
+  reviewsReceived CodeReview[] @relation("Reviewee")
+}
+
+// ==================== COURSE ====================
+
+model Course {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  description   String?
+  totalHours    Int       @default(600)
+  published     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  modules       Module[]
+  enrollments   Enrollment[]
+}
+
+model Module {
+  id            String    @id @default(cuid())
+  courseId       String
+  course         Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  order         Int
+  title         String
+  slug          String
+  description   String?
+  totalLessons  Int       @default(0)
+  xpReward      Int       @default(100)
+  published     Boolean   @default(false)
+
+  lessons       Lesson[]
+  projects      Project[]
+  quizzes       Quiz[]
+
+  @@unique([courseId, slug])
+}
+
+// ==================== CONTENT ====================
+
+model Lesson {
+  id            String    @id @default(cuid())
+  moduleId      String
+  module         Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  order         Int
+  title         String
+  slug          String
+  type          String    @default("THEORY")
+  content       String
+  durationMin   Int       @default(15)
+  xpReward      Int       @default(15)
+  published     Boolean   @default(false)
+
+  exercises     Exercise[]
+  progress      Progress[]
+
+  @@unique([moduleId, slug])
+}
+
+model Exercise {
+  id            String    @id @default(cuid())
+  lessonId      String
+  lesson         Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  title         String
+  description   String
+  starterCode   String
+  solution      String
+  testCases     String
+  xpReward      Int       @default(15)
+  order         Int
+}
+
+model Project {
+  id            String    @id @default(cuid())
+  moduleId      String
+  module         Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title         String
+  description   String
+  requirements  String
+  rubric        String
+  xpReward      Int       @default(100)
+}
+
+// ==================== QUIZ ====================
+
+model Quiz {
+  id            String    @id @default(cuid())
+  moduleId      String
+  module         Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title         String
+  passingScore  Int       @default(70)
+  timeLimitMin  Int       @default(10)
+  xpReward      Int       @default(25)
+
+  questions     QuizQuestion[]
+  results       QuizResult[]
+}
+
+model QuizQuestion {
+  id            String    @id @default(cuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question      String
+  options       String
+  explanation   String?
+  order         Int
+}
+
+model QuizResult {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score         Int
+  answers       String
+  completedAt   DateTime  @default(now())
+  xpEarned      Int       @default(0)
+}
+
+// ==================== PROGRESS ====================
+
+model Progress {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId      String
+  lesson         Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completed     Boolean   @default(false)
+  completedAt   DateTime?
+  timeSpentMin  Int       @default(0)
+
+  @@unique([userId, lessonId])
+}
+
+// ==================== GAMIFICATION ====================
+
+model Streak {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  current       Int       @default(0)
+  best          Int       @default(0)
+  lastStudyDate DateTime?
+  updatedAt     DateTime  @updatedAt
+}
+
+model XpRecord {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  total         Int       @default(0)
+  level         Int       @default(1)
+  updatedAt     DateTime  @updatedAt
+}
+
+model Badge {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  description   String
+  icon          String
+  category      String
+  requirement   String
+  xpReward      Int       @default(0)
+
+  users         UserBadge[]
+}
+
+model UserBadge {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId       String
+  badge         Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  earnedAt      DateTime  @default(now())
+
+  @@unique([userId, badgeId])
+}
+
+// ==================== ENROLLMENT ====================
+
+model Enrollment {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId       String
+  course         Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrolledAt    DateTime  @default(now())
+  completedAt   DateTime?
+  active        Boolean   @default(true)
+
+  @@unique([userId, courseId])
+}
+
+// ==================== SPACED REPETITION ====================
+
+model SpacedRepetition {
+  id            String    @id @default(cuid())
+  userId        String
+  lessonId      String
+  nextReview    DateTime
+  interval      Int       @default(1)
+  easeFactor    Float     @default(2.5)
+  repetitions   Int       @default(0)
+  lastReview    DateTime?
+  state         String    @default("new")
+
+  @@unique([userId, lessonId])
+  @@index([userId, nextReview])
+}
+
+// ==================== CODE REVIEW ====================
+
+model CodeReview {
+  id            String    @id @default(cuid())
+  reviewerId    String
+  reviewer      User     @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: Cascade)
+  revieweeId    String
+  reviewee      User     @relation("Reviewee", fields: [revieweeId], references: [id], onDelete: Cascade)
+  lessonId      String
+  codeSnippet   String
+  feedback      String
+  score         Int?
+  createdAt     DateTime  @default(now())
+}
