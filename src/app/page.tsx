@@ -45,7 +45,7 @@ export default function LandingPage() {
       <Header />
 
       {/* HERO — background boia-sol + capivara PNG por cima */}
-      <section className="relative min-h-[90vh] lg:min-h-[93vh] overflow-hidden">
+      <section className="relative min-h-[90vh] lg:min-h-[93vh] overflow-x-hidden">
         {/* fundo base escuro */}
         <div className="absolute inset-0 bg-[#050914]" />
 
@@ -110,13 +110,13 @@ export default function LandingPage() {
           </div>
 
           {/* ═══ RIGHT — capivara gigante por cima do background ═══ */}
-          <div className="relative h-[520px] lg:h-[700px]">
+          <div className="relative h-[520px] lg:h-[700px] overflow-visible">
             {/* CAPIVARA — 1200px, sentada na boia */}
             <motion.img
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
               src="/capivara-removebg-preview.png"
               alt="Capivara programando"
-              className="absolute bottom-0 left-[10%] w-[1200px] h-[1200px] object-contain object-bottom z-10"
+              className="absolute bottom-[-60px] left-[-5%] w-[1200px] h-[1200px] object-contain object-bottom z-10"
               style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }}
             />
 
