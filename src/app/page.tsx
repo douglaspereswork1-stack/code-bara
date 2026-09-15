@@ -51,23 +51,17 @@ export default function LandingPage() {
 
         {/* background image — cena pôr do sol + boia (lado direito) */}
         <div
-          className="absolute top-0 right-0 w-[70%] h-full bg-cover bg-center bg-no-repeat opacity-90 pointer-events-none"
-          style={{
-            backgroundImage: 'url(/boia-sol.png)',
-            maskImage: 'linear-gradient(to right, transparent 0%, black 35%)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 35%)',
-          }}
+          className="absolute top-0 right-0 w-[75%] h-full bg-cover bg-top bg-no-repeat pointer-events-none"
+          style={{ backgroundImage: 'url(/boia-sol.png)' }}
         />
 
-        {/* fade escuro no topo e base para blends */}
+        {/* overlay escuro que esconde a borda esquerda do background */}
         <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-0 w-[50%] h-full bg-gradient-to-r from-[#050914] via-[#050914] to-transparent" />
+          <div className="absolute top-0 left-[30%] w-[30%] h-full bg-gradient-to-r from-[#050914]/80 to-transparent" />
           <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#050914] to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050914] to-transparent" />
-          <div className="absolute top-0 left-0 w-[45%] h-full bg-gradient-to-r from-[#050914] via-[#050914]/60 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#050914] to-transparent" />
         </div>
-
-        {/* glow sutil na junção */}
-        <div className="absolute top-1/2 left-[35%] -translate-y-1/2 w-[300px] h-[400px] bg-[#F97316]/8 blur-[100px] rounded-full pointer-events-none" />
 
         {/* ── conteúdo ── */}
         <div className="relative max-w-[1400px] mx-auto px-4 lg:px-8 w-full grid lg:grid-cols-[1fr_1.1fr] gap-0 items-center h-full min-h-[90vh] lg:min-h-[93vh]">
@@ -115,15 +109,15 @@ export default function LandingPage() {
             </motion.div>
           </div>
 
-          {/* ═══ RIGHT — capivara grande por cima do background ═══ */}
-          <div className="relative h-[520px] lg:h-[680px]">
-            {/* CAPIVARA — 850px, sentada na boia */}
+          {/* ═══ RIGHT — capivara gigante por cima do background ═══ */}
+          <div className="relative h-[520px] lg:h-[700px]">
+            {/* CAPIVARA — 1200px, sentada na boia */}
             <motion.img
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
               src="/capivara-removebg-preview.png"
               alt="Capivara programando"
-              className="absolute bottom-0 left-1/2 -translate-x-[40%] w-[850px] h-[850px] object-contain object-bottom z-10"
-              style={{ filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.4))' }}
+              className="absolute bottom-0 left-[10%] w-[1200px] h-[1200px] object-contain object-bottom z-10"
+              style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }}
             />
 
             {/* ─── floating: file tree ─── */}
