@@ -51,7 +51,7 @@ export default function LandingPage() {
         {/* background image — cena completa capivara na boia (lado direito) */}
         <div
           className="absolute top-0 right-0 w-[75%] h-full bg-cover bg-top bg-no-repeat pointer-events-none"
-          style={{ backgroundImage: 'url(/hero-cena-completa.png)' }}
+          style={{ backgroundImage: 'url(/CAPI-COPMPLETA - Copia.png)' }}
         />
 
         {/* overlay escuro que esconde a borda esquerda do background */}
