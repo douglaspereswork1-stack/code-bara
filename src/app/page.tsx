@@ -116,16 +116,16 @@ export default function LandingPage() {
           </div>
 
           {/* ═══ RIGHT — capivara 600px por cima do background ═══ */}
-          <div className="relative flex items-end justify-center lg:justify-start h-[520px] lg:h-[600px]">
-            {/* CAPIVARA — 600px, sentada na boia do background */}
+          <div className="relative h-[520px] lg:h-[600px]">
+            {/* CAPIVARA — 600px, alinhada na boia do background */}
             <motion.img
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
               src="/capivara.png"
               alt="Capivara programando"
               width={600}
               height={600}
-              className="relative z-10 w-[600px] h-[600px] object-contain object-bottom"
-              style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.4)) drop-shadow(0 0 30px rgba(34,211,238,0.1))' }}
+              className="absolute bottom-0 right-0 lg:right-8 w-[600px] h-[600px] object-contain object-bottom z-10"
+              style={{ filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.4))', mixBlendMode: 'darken' }}
             />
 
             {/* ─── floating: file tree ─── */}
