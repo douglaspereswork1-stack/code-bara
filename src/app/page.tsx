@@ -120,7 +120,7 @@ export default function LandingPage() {
             {/* CAPIVARA — 600px, sentada na boia do background */}
             <motion.img
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
-              src="/capivara-hero.png"
+              src="/capivara.png"
               alt="Capivara programando"
               width={600}
               height={600}
