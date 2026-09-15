@@ -120,12 +120,12 @@ export default function LandingPage() {
             {/* CAPIVARA — 600px, alinhada na boia do background */}
             <motion.img
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
-              src="/capivara.png"
+              src="/capivara-removebg-preview.png"
               alt="Capivara programando"
-              width={600}
-              height={600}
-              className="absolute bottom-0 right-0 lg:right-8 w-[600px] h-[600px] object-contain object-bottom z-10"
-              style={{ filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.4))', mixBlendMode: 'darken' }}
+              width={700}
+              height={700}
+              className="absolute bottom-0 right-0 lg:right-4 w-[700px] h-[700px] object-contain object-bottom z-10"
+              style={{ filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.4))' }}
             />
 
             {/* ─── floating: file tree ─── */}
