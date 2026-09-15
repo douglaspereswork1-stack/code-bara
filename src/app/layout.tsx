@@ -16,8 +16,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Code.Bara — codebara.dev",
-  description: "Code.Bara — Aprenda desenvolvimento FullStack do zero ao emprego com projetos práticos, debugging, testes e gamificação.",
+  title: "Code.Zen — codezen.dev",
+  description: "Code.Zen — Aprenda desenvolvimento FullStack do zero ao emprego com projetos práticos, debugging, testes e gamificação.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

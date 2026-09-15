@@ -18,7 +18,7 @@ function Header() {
       <div className="max-w-7xl mx-auto px-4 lg:px-6 h-[64px] flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <span className="w-9 h-9 rounded-xl bg-[#F5C6A0] flex items-center justify-center text-lg overflow-hidden">🐻</span>
-          <span className="font-black tracking-tight text-white text-lg">Code.Bara</span>
+          <span className="font-black tracking-tight text-white text-lg">Code.<span className="text-[#FACC15]">Zen</span></span>
           <span className="text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded-md bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white">PRO</span>
         </Link>
         <nav className="hidden lg:flex items-center gap-6 text-sm font-medium">

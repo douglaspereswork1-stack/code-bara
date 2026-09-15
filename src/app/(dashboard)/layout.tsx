@@ -15,7 +15,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* status bar */}
         <footer className="h-8 border-t border-white/[0.06] bg-[#0A1020] flex items-center justify-between px-4 lg:px-6 text-[11px] text-[#64748B]">
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#10B981] shadow-[0_0_6px_rgba(16,185,129,0.5)]" /> Code.Bara ● Online</span>
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#10B981] shadow-[0_0_6px_rgba(16,185,129,0.5)]" /> Code.Zen ● Online</span>
             <span className="hidden md:flex items-center gap-1.5">
               <span className="w-6 h-6 rounded bg-[#F97316] flex items-center justify-center text-[10px] font-black text-white">5</span> <span className="mr-1">HTML</span>
               <span className="w-6 h-6 rounded bg-[#3B82F6] flex items-center justify-center text-[10px] font-black text-white">3</span> <span className="mr-1">CSS</span>

@@ -83,7 +83,7 @@ export function Sidebar() {
             <Code2 className="w-5 h-5 text-white" />
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-bold tracking-tight text-white">Code.Bara</span>
+            <span className="font-bold tracking-tight text-white">Code.<span className="text-[#FACC15]">Zen</span></span>
             <span className="text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded-md bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white">PRO</span>
           </div>
         </div>
