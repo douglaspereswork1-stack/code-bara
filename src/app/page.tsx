@@ -54,16 +54,16 @@ export default function LandingPage() {
           className="absolute top-0 right-0 w-[70%] h-full bg-cover bg-center bg-no-repeat opacity-90 pointer-events-none"
           style={{
             backgroundImage: 'url(/boia-sol.png)',
-            maskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 35%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 35%)',
           }}
         />
 
         {/* fade escuro no topo e base para blends */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#050914] to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#050914] to-transparent" />
-          <div className="absolute top-0 left-0 w-[40%] h-full bg-gradient-to-r from-[#050914] via-[#050914]/80 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#050914] to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050914] to-transparent" />
+          <div className="absolute top-0 left-0 w-[45%] h-full bg-gradient-to-r from-[#050914] via-[#050914]/60 to-transparent" />
         </div>
 
         {/* glow sutil na junção */}
@@ -115,16 +115,14 @@ export default function LandingPage() {
             </motion.div>
           </div>
 
-          {/* ═══ RIGHT — capivara 600px por cima do background ═══ */}
-          <div className="relative h-[520px] lg:h-[600px]">
-            {/* CAPIVARA — 600px, alinhada na boia do background */}
+          {/* ═══ RIGHT — capivara grande por cima do background ═══ */}
+          <div className="relative h-[520px] lg:h-[680px]">
+            {/* CAPIVARA — 850px, sentada na boia */}
             <motion.img
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
               src="/capivara-removebg-preview.png"
               alt="Capivara programando"
-              width={700}
-              height={700}
-              className="absolute bottom-0 right-0 lg:right-4 w-[700px] h-[700px] object-contain object-bottom z-10"
+              className="absolute bottom-0 left-1/2 -translate-x-[40%] w-[850px] h-[850px] object-contain object-bottom z-10"
               style={{ filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.4))' }}
             />
 
