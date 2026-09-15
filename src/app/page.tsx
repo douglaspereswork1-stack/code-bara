@@ -17,7 +17,6 @@ function Header() {
     <header className="sticky top-0 z-30 bg-[#050914]/80 backdrop-blur-xl border-b border-white/[0.06]">
       <div className="max-w-7xl mx-auto px-4 lg:px-6 h-[64px] flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <span className="w-9 h-9 rounded-xl bg-[#F5C6A0] flex items-center justify-center text-lg overflow-hidden">🐻</span>
           <span className="font-black tracking-tight text-white text-lg">Code.<span className="text-[#FACC15]">Zen</span></span>
           <span className="text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded-md bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white">PRO</span>
         </Link>
@@ -116,7 +115,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
               src="/capivara-removebg-preview.png"
               alt="Capivara programando"
-              className="absolute bottom-[-60px] left-[-5%] w-[1200px] h-[1200px] object-contain object-bottom z-10"
+              className="absolute bottom-[-120px] left-[-15%] w-[1200px] h-[1200px] object-contain object-bottom z-10"
               style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }}
             />
 
