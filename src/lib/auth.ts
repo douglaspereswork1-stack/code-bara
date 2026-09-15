@@ -36,11 +36,20 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token?.sub && session.user) {
         (session.user as unknown as { id: string }).id = token.sub
+        ;(session.user as unknown as { isPaid: boolean }).isPaid = (token as unknown as { isPaid?: boolean }).isPaid ?? false
       }
       return session
     },
     async jwt({ token, user }) {
       if (user) token.sub = user.id
+      // Busca isPaid do DB no primeiro login do token
+      if (token.sub && token.isPaid === undefined) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { isPaid: true },
+        })
+        ;(token as unknown as { isPaid: boolean }).isPaid = dbUser?.isPaid ?? false
+      }
       return token
     },
   },
