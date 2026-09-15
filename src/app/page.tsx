@@ -44,16 +44,33 @@ export default function LandingPage() {
     <div className="min-h-screen flex flex-col bg-[#050914] overflow-hidden">
       <Header />
 
-      {/* HERO — referência: capivara gigante centralizada na direita */}
-      <section className="relative min-h-[90vh] lg:min-h-[93vh] overflow-hidden flex items-center">
-        {/* fundo base */}
+      {/* HERO — background boia-sol + capivara PNG por cima */}
+      <section className="relative min-h-[90vh] lg:min-h-[93vh] overflow-hidden">
+        {/* fundo base escuro */}
         <div className="absolute inset-0 bg-[#050914]" />
 
-        {/* glow sutil pôr do sol — atrás da capivara */}
-        <div className="absolute top-[8%] right-[8%] w-[500px] h-[500px] rounded-full bg-[#F97316]/10 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[5%] right-[15%] w-[400px] h-[300px] rounded-full bg-[#22D3EE]/8 blur-[100px] pointer-events-none" />
+        {/* background image — cena pôr do sol + boia (lado direito) */}
+        <div
+          className="absolute top-0 right-0 w-[70%] h-full bg-cover bg-center bg-no-repeat opacity-90 pointer-events-none"
+          style={{
+            backgroundImage: 'url(/boia-sol.png)',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
+          }}
+        />
 
-        <div className="relative max-w-[1400px] mx-auto px-4 lg:px-8 w-full grid lg:grid-cols-[1fr_1.2fr] gap-0 items-center">
+        {/* fade escuro no topo e base para blends */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#050914] to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#050914] to-transparent" />
+          <div className="absolute top-0 left-0 w-[40%] h-full bg-gradient-to-r from-[#050914] via-[#050914]/80 to-transparent" />
+        </div>
+
+        {/* glow sutil na junção */}
+        <div className="absolute top-1/2 left-[35%] -translate-y-1/2 w-[300px] h-[400px] bg-[#F97316]/8 blur-[100px] rounded-full pointer-events-none" />
+
+        {/* ── conteúdo ── */}
+        <div className="relative max-w-[1400px] mx-auto px-4 lg:px-8 w-full grid lg:grid-cols-[1fr_1.1fr] gap-0 items-center h-full min-h-[90vh] lg:min-h-[93vh]">
           {/* ═══ LEFT — texto ═══ */}
           <div className="relative z-20 py-12 lg:py-0">
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide px-3 py-1.5 rounded-full border border-[#22D3EE]/30 bg-[#22D3EE]/10 text-[#22D3EE]">
@@ -98,24 +115,23 @@ export default function LandingPage() {
             </motion.div>
           </div>
 
-          {/* ═══ RIGHT — capivara ENORME + floating ═══ */}
-          <div className="relative h-[500px] sm:h-[560px] lg:h-[640px] -ml-8 lg:ml-0">
-            {/* CAPIVARA — gigante, sem restrição de tamanho */}
-            <div className="absolute inset-0 flex items-center justify-center lg:justify-start">
-              <img
-                src="/capivara-hero.png"
-                alt="Capivara programando na água ao pôr do sol"
-                className="w-[110%] max-w-none lg:w-[130%] h-full object-contain object-center"
-                style={{
-                  filter: 'drop-shadow(0 25px 50px rgba(0,0,0,0.5)) drop-shadow(0 0 60px rgba(34,211,238,0.1))',
-                }}
-              />
-            </div>
+          {/* ═══ RIGHT — capivara 600px por cima do background ═══ */}
+          <div className="relative flex items-end justify-center lg:justify-start h-[520px] lg:h-[600px]">
+            {/* CAPIVARA — 600px, sentada na boia do background */}
+            <motion.img
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
+              src="/capivara-hero.png"
+              alt="Capivara programando"
+              width={600}
+              height={600}
+              className="relative z-10 w-[600px] h-[600px] object-contain object-bottom"
+              style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.4)) drop-shadow(0 0 30px rgba(34,211,238,0.1))' }}
+            />
 
             {/* ─── floating: file tree ─── */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
-              className="absolute top-[6%] left-[2%] hidden lg:flex flex-col gap-1 p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30"
+              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5, duration: 0.5 }}
+              className="absolute top-[4%] left-0 hidden lg:flex flex-col gap-1 p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30"
             >
               <div className="flex items-center gap-2 text-xs text-[#94A3B8] font-medium">
                 <FolderIcon /> src <ChevronDown className="w-3 h-3 ml-auto text-[#64748B]" />
@@ -130,8 +146,8 @@ export default function LandingPage() {
 
             {/* ─── floating: code snippet ─── */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }}
-              className="absolute top-[28%] left-[6%] hidden lg:block p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30"
+              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.5 }}
+              className="absolute top-[30%] left-[4%] hidden lg:block p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30"
             >
               <div className="text-[11px] font-mono leading-relaxed">
                 <span className="text-[#C084FC]">const</span> <span className="text-[#22D3EE]">app</span> <span className="text-[#64748B]">=</span> <span className="text-[#C084FC]">async</span> <span className="text-[#64748B]">() =&gt; {'{'}</span><br/>
@@ -142,8 +158,8 @@ export default function LandingPage() {
 
             {/* ─── floating: tech logos ─── */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.45, duration: 0.5 }}
-              className="absolute top-[4%] right-[2%] hidden lg:grid grid-cols-3 gap-2.5 p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30"
+              initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5, duration: 0.5 }}
+              className="absolute top-[2%] right-[5%] hidden lg:grid grid-cols-3 gap-2.5 p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30"
             >
               {[
                 { bg: 'bg-[#F97316]', label: '5' },
@@ -159,14 +175,14 @@ export default function LandingPage() {
 
             {/* ─── floating: Código + Foco = Liberdade ─── */}
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-              className="absolute bottom-[18%] right-[4%] z-30 text-right hidden lg:block"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}
+              className="absolute bottom-[12%] right-[8%] z-30 text-right hidden lg:block"
             >
               <div className="flex flex-col items-end leading-none">
                 <span className="text-sm font-black text-[#22D3EE]">Código</span>
-                <span className="text-[10px] text-[#64748B] my-0.5">+</span>
+                <span className="text-[10px] text-[#94A3B8] my-0.5">+</span>
                 <span className="text-sm font-black text-[#22D3EE]">Foco</span>
-                <span className="text-[10px] text-[#64748B] my-0.5">=</span>
+                <span className="text-[10px] text-[#94A3B8] my-0.5">=</span>
                 <span className="text-lg font-black bg-gradient-to-r from-[#22D3EE] to-[#8B5CF6] bg-clip-text text-transparent">Liberdade</span>
               </div>
             </motion.div>
