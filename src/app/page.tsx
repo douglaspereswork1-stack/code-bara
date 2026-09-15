@@ -1,18 +1,18 @@
 "use client"
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { BookOpen, Code, Trophy, Zap } from 'lucide-react'
+import { BookOpen, Code, Trophy, Zap, Sparkles, Droplets, Leaf } from 'lucide-react'
 import { Capybara } from '@/components/Capybara'
 
-function FloatingIcon({ emoji, x, y, delay, size = "text-3xl" }: { emoji: string; x: string; y: string; delay: number; size?: string }) {
+function FloatingIcon({ icon, x, y, delay }: { icon: React.ReactNode; x: string; y: string; delay: number }) {
   return (
     <motion.div
-      className={`absolute ${size} select-none pointer-events-none`}
+      className="absolute select-none pointer-events-none opacity-20"
       style={{ left: x, top: y }}
       animate={{ y: [0, -14, 0], rotate: [-3, 3, -3] }}
       transition={{ duration: 3 + delay, repeat: Infinity, ease: "easeInOut", delay }}
     >
-      {emoji}
+      {icon}
     </motion.div>
   )
 }
@@ -52,12 +52,11 @@ export default function LandingPage() {
       {/* Hero */}
       <header className="relative flex-1 flex flex-col items-center justify-center px-4 text-center py-16 md:py-20">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <FloatingIcon emoji="🌿" x="8%" y="12%" delay={0} />
-          <FloatingIcon emoji="🌿" x="82%" y="18%" delay={0.4} />
-          <FloatingIcon emoji="💧" x="12%" y="68%" delay={0.8} />
-          <FloatingIcon emoji="🍃" x="88%" y="72%" delay={1.0} />
-          <FloatingIcon emoji="🍃" x="5%" y="42%" delay={0.6} />
-          <FloatingIcon emoji="✨" x="92%" y="42%" delay={1.2} />
+          <FloatingIcon icon={<Leaf className="w-6 h-6 text-[#10B981]" />} x="8%" y="12%" delay={0} />
+          <FloatingIcon icon={<Leaf className="w-5 h-5 text-[#10B981]" />} x="82%" y="18%" delay={0.4} />
+          <FloatingIcon icon={<Droplets className="w-6 h-6 text-[#22D3EE]" />} x="12%" y="68%" delay={0.8} />
+          <FloatingIcon icon={<Leaf className="w-5 h-5 text-[#10B981]" />} x="88%" y="72%" delay={1.0} />
+          <FloatingIcon icon={<Sparkles className="w-5 h-5 text-[#8B5CF6]" />} x="92%" y="42%" delay={1.2} />
         </div>
 
         <motion.div
@@ -69,7 +68,7 @@ export default function LandingPage() {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#22D3EE] to-[#3B82F6] flex items-center justify-center p-1 shadow-lg shadow-[#3B82F6]/20">
             <Capybara size={28} />
           </div>
-          <span className="text-xl font-bold tracking-tight">DevFullStack</span>
+          <span className="text-xl font-bold tracking-tight">Code.Bara</span>
           <span className="text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded-md bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white">PRO</span>
         </motion.div>
 
@@ -96,7 +95,7 @@ export default function LandingPage() {
           transition={{ delay: 0.3 }}
         >
           25 módulos, 750h, projetos reais, debugging, testes e code review.
-          Sem pressa, sem burnout — como capivara na água. 💦
+          Sem pressa, sem burnout — como capivara na água.
         </motion.p>
         <motion.p
           className="text-sm text-[#22D3EE]/80 mb-8"
@@ -143,10 +142,10 @@ export default function LandingPage() {
       <section className="py-10 px-4">
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: BookOpen, label: "Módulos", value: "25", emoji: "📚" },
-            { icon: Code, label: "Exercícios", value: "433+", emoji: "⌨️" },
-            { icon: Trophy, label: "Projetos", value: "8+", emoji: "🏗️" },
-            { icon: Zap, label: "Horas", value: "750+", emoji: "⚡" },
+            { icon: BookOpen, label: "Módulos", value: "25" },
+            { icon: Code, label: "Exercícios", value: "433+" },
+            { icon: Trophy, label: "Projetos", value: "8+" },
+            { icon: Zap, label: "Horas", value: "750+" },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -157,7 +156,7 @@ export default function LandingPage() {
               transition={{ delay: i * 0.07 }}
               whileHover={{ y: -4 }}
             >
-              <div className="text-2xl mb-1">{stat.emoji}</div>
+              <stat.icon className="w-6 h-6 mx-auto mb-2 text-[#22D3EE]" />
               <div className="text-3xl font-black">{stat.value}</div>
               <div className="text-sm text-muted-foreground">{stat.label}</div>
             </motion.div>
@@ -190,13 +189,15 @@ export default function LandingPage() {
           <p className="text-center text-muted-foreground mb-10 text-sm">Calma, consistência e diversão — o resto a gente ensina</p>
           <div className="grid md:grid-cols-3 gap-5">
             {[
-              { icon: "🐛", title: "Debug Real", desc: "Breakpoints, stack traces, debugging sistemático. Capivara investiga com calma." },
-              { icon: "🧪", title: "TDD desde cedo", desc: "Red-Green-Refactor como disciplina. Testa antes, como capivara checa a água." },
-              { icon: "👀", title: "Reading Code", desc: "80% é código legado. Aprenda a ler código dos outros sem pânico." },
-              { icon: "🚀", title: "Deploy Real", desc: "Se só roda na sua máquina, não conta. Deploy automatizado de verdade." },
-              { icon: "👥", title: "Code Review", desc: "Revise código de colegas e receba feedback — alcateia de capivaras." },
-              { icon: "🧠", title: "Revisão Espaçada", desc: "FSRS (Anki). Revise no momento certo pra não esquecer. Memória de capivara!" },
-            ].map((f, i) => (
+              { icon: Code, title: "Debug Real", desc: "Breakpoints, stack traces, debugging sistemático. Capivara investiga com calma." },
+              { icon: Trophy, title: "TDD desde cedo", desc: "Red-Green-Refactor como disciplina. Testa antes, como capivara checa a água." },
+              { icon: BookOpen, title: "Reading Code", desc: "80% é código legado. Aprenda a ler código dos outros sem pânico." },
+              { icon: Zap, title: "Deploy Real", desc: "Se só roda na sua máquina, não conta. Deploy automatizado de verdade." },
+              { icon: Code, title: "Code Review", desc: "Revise código de colegas e receba feedback — alcateia de capivaras." },
+              { icon: BookOpen, title: "Revisão Espaçada", desc: "FSRS (Anki). Revise no momento certo pra não esquecer. Memória de capivara!" },
+            ].map((f, i) => {
+              const Icon = f.icon
+              return (
               <motion.div
                 key={f.title}
                 className="p-6 rounded-2xl bg-[#0D1528] border border-white/[0.06] hover:border-[#22D3EE]/20 hover:-translate-y-0.5 transition-all group"
@@ -206,11 +207,11 @@ export default function LandingPage() {
                 transition={{ delay: i * 0.06 }}
                 whileHover={{ y: -3 }}
               >
-                <div className="text-3xl mb-3 group-hover:scale-110 transition-transform">{f.icon}</div>
-                <h3 className="font-bold mb-1">{f.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                <h3 className="font-bold mb-1 text-white">{f.title}</h3>
+                <p className="text-sm text-[#94A3B8] leading-relaxed">{f.desc}</p>
               </motion.div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
@@ -224,8 +225,7 @@ export default function LandingPage() {
           viewport={{ once: true }}
         >
           <div className="absolute -top-6 -right-6 opacity-20"><Capybara size={90} /></div>
-          <div className="absolute -bottom-6 -left-6 text-7xl opacity-20">🌿</div>
-          <h3 className="text-2xl md:text-3xl font-black mb-2 relative">Bora codar, capivara? 💻</h3>
+          <h3 className="text-2xl md:text-3xl font-black mb-2 relative">Bora codar, capivara?</h3>
           <p className="text-white/85 mb-6 relative">Entre na alcateia. Primeiro módulo grátis.</p>
           <Link href="/register" className="inline-flex px-8 py-3 bg-white text-[#3B82F6] rounded-full font-black hover:bg-white/90 transition relative">
             Criar minha conta →
@@ -235,8 +235,8 @@ export default function LandingPage() {
 
       <footer className="py-8 px-4 border-t border-border">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2 text-sm text-muted-foreground">
-          <span>DevFullStack © 2026 — capivara edition</span>
-          <span>Feito com 💧🌿 e muito café — sem capivara foi maltratada</span>
+          <span>DevFullStack © 2026</span>
+          <span>Feito com muito café</span>
         </div>
       </footer>
     </div>

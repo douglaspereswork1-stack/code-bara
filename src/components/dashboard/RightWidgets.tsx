@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CheckCircle2, PlayCircle } from 'lucide-react'
+import { CheckCircle, BookOpen, ClipboardCheck, Code2, GitBranch, PlayCircle } from 'lucide-react'
 
 export function RightWidgets() {
   return (
@@ -16,19 +16,20 @@ export function RightWidgets() {
       </div>
 
       <div className="rounded-2xl bg-[#0D1528] border border-white/[0.06] p-6">
-        <h3 className="font-semibold text-white text-sm">Atividade Recente</h3>
-        <div className="mt-4 space-y-3 text-sm">
+        <h3 className="font-semibold text-white text-sm tracking-wide">ATIVIDADE RECENTE</h3>
+        <div className="mt-4 grid grid-cols-5 gap-2">
           {[
-            { icon: <CheckCircle2 className="w-4 h-4 text-[#10B981]" />, text: 'Completou o módulo', bold: 'JS Advanced' },
-            { icon: <span className="text-xs">📝</span>, text: 'Fez o quiz semanal', bold: '' },
-            { icon: <span className="text-xs">🔁</span>, text: 'Revisou', bold: 'HTML Basics' },
-            { icon: <span className="text-xs">⚡</span>, text: 'Concluiu 2 desafios', bold: '' },
-          ].map((a, i) => (
-            <div key={i} className="flex gap-3 items-start">
-              <span className="mt-0.5 shrink-0">{a.icon}</span>
-              <span className="text-[#94A3B8] text-xs leading-relaxed">
-                {a.text} {a.bold && <span className="text-white font-semibold">{a.bold}</span>}
-              </span>
+            { icon: CheckCircle, label: 'Módulo\nconcluído', color: 'text-[#10B981]', bg: 'bg-[#10B981]/10 border-[#10B981]/20' },
+            { icon: BookOpen, label: 'Aula\nassistida', color: 'text-[#8B5CF6]', bg: 'bg-[#8B5CF6]/10 border-[#8B5CF6]/20' },
+            { icon: ClipboardCheck, label: 'Quiz\nrealizado', color: 'text-[#22D3EE]', bg: 'bg-[#22D3EE]/10 border-[#22D3EE]/20' },
+            { icon: Code2, label: 'Desafio\nconcluído', color: 'text-[#3B82F6]', bg: 'bg-[#3B82F6]/10 border-[#3B82F6]/20' },
+            { icon: GitBranch, label: 'Código\nenviado', color: 'text-[#8B5CF6]', bg: 'bg-[#8B5CF6]/10 border-[#8B5CF6]/20' },
+          ].map((a) => (
+            <div key={a.label} className="flex flex-col items-center gap-2">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${a.bg}`}>
+                <a.icon className={`w-5 h-5 ${a.color}`} />
+              </div>
+              <span className="text-[10px] text-[#94A3B8] text-center whitespace-pre leading-tight">{a.label}</span>
             </div>
           ))}
         </div>
