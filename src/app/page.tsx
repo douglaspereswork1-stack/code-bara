@@ -85,7 +85,6 @@ export default function LandingPage() {
                 { icon: Zap, label: 'Do zero\nao avançado' },
                 { icon: Code2, label: 'Projetos reais\ndo mercado' },
                 { icon: Users, label: 'Suporte da\ncomunidade' },
-                { icon: ShieldCheck, label: 'Acesso vitalício\ne certificado' },
               ].map(s => (
                 <div key={s.label} className="flex items-center gap-2.5">
                   <span className="w-8 h-8 rounded-lg bg-[#22D3EE]/10 border border-[#22D3EE]/15 flex items-center justify-center shrink-0"><s.icon className="w-4 h-4 text-[#22D3EE]" /></span>
@@ -101,10 +100,6 @@ export default function LandingPage() {
               <Link href="/curso/dev-fullstack" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-transparent border border-white/20 text-white font-semibold hover:bg-white/[0.06] transition text-sm">
                 <Play className="w-3 h-3 text-[#22D3EE] fill-[#22D3EE]" /> Ver Módulos
               </Link>
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }} className="mt-5 flex items-center gap-2 text-xs text-[#64748B]">
-              <Gift className="w-3.5 h-3.5" /> Grátis pra começar <span className="w-1 h-1 rounded-full bg-[#64748B]" /> Sem cartão <span className="w-1 h-1 rounded-full bg-[#64748B]" /> Capivara aprova <span className="w-3.5 h-3.5 rounded bg-[#10B981] flex items-center justify-center text-white text-[10px]">✓</span>
             </motion.div>
           </div>
 
