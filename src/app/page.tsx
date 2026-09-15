@@ -108,26 +108,19 @@ export default function LandingPage() {
               ))}
             </div>
 
-            {/* capybara GRANDE na boia */}
+            {/* capybara PNG recortada */}
             <div className="relative">
               <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[520px] h-[160px] bg-[#22D3EE]/25 blur-3xl rounded-full pointer-events-none" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#22D3EE]/5 via-transparent to-transparent rounded-3xl pointer-events-none" />
-              <div className="relative w-[360px] lg:w-[500px] h-[400px] lg:h-[460px] flex items-center justify-center">
-                {/* boia */}
-                <div className="absolute bottom-4 w-[380px] h-[140px] rounded-[50%] bg-gradient-to-br from-[#1E3A5F] to-[#0D1528] border border-[#22D3EE]/30 shadow-2xl" />
-                <div className="absolute bottom-8 w-[340px] h-[60px] rounded-[50%] border border-[#22D3EE]/10" />
-                <div className="absolute bottom-4 w-[380px] h-[30px] rounded-[50%] bg-[#22D3EE]/15 blur-xl" />
-                {/* fone brilho */}
-                <div className="absolute top-[58px] left-1/2 -translate-x-1/2 w-[200px] h-[200px] bg-[#22D3EE]/10 blur-2xl rounded-full pointer-events-none" />
-                <div className="relative flex flex-col items-center">
+              <div className="relative w-[360px] lg:w-[520px] h-[400px] lg:h-[460px] flex items-center justify-center">
+                <img
+                  src="/capivara-hero.png"
+                  alt="Capivara na boia com laptop"
+                  className="relative w-full h-full object-contain drop-shadow-2xl"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none peer-[img[style*='display: none']]:flex hidden">
                   <Capybara size={240} />
-                  <div className="mt-1 w-[200px] h-[120px] rounded-xl bg-[#0D1528] border border-[#22D3EE]/40 flex items-center justify-center shadow-xl shadow-[#22D3EE]/10">
-                    <Code2 className="w-12 h-12 text-[#22D3EE] drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
-                  </div>
-                  <div className="absolute -right-2 bottom-14 hidden lg:block text-right">
-                    <div className="text-xs font-black text-[#22D3EE] leading-tight tracking-wide">Código<br />+<br />Foco<br />=<br />Liberdade</div>
-                    <div className="text-[#22D3EE] text-xl mt-1">↑</div>
-                  </div>
                 </div>
               </div>
             </div>
