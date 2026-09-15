@@ -48,10 +48,10 @@ export default function LandingPage() {
         {/* fundo base escuro */}
         <div className="absolute inset-0 bg-[#050914]" />
 
-        {/* background image — cena pôr do sol + boia (lado direito) */}
+        {/* background image — cena completa capivara na boia (lado direito) */}
         <div
           className="absolute top-0 right-0 w-[75%] h-full bg-cover bg-top bg-no-repeat pointer-events-none"
-          style={{ backgroundImage: 'url(/boia-sol.png)' }}
+          style={{ backgroundImage: 'url(/hero-cena-completa.png)' }}
         />
 
         {/* overlay escuro que esconde a borda esquerda do background */}
@@ -63,7 +63,7 @@ export default function LandingPage() {
         </div>
 
         {/* ── conteúdo ── */}
-        <div className="relative max-w-[1400px] mx-auto px-4 lg:px-8 w-full grid lg:grid-cols-[1fr_1.1fr] gap-0 items-center h-full min-h-screen">
+        <div className="relative max-w-[1400px] mx-auto px-4 lg:px-8 w-full grid lg:grid-cols-[1fr_1.1fr] gap-0 items-start pt-24 pb-8 h-full min-h-screen">
           {/* ═══ LEFT — texto ═══ */}
           <div className="relative z-20 py-12 lg:py-0">
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide px-3 py-1.5 rounded-full border border-[#22D3EE]/30 bg-[#22D3EE]/10 text-[#22D3EE]">
@@ -108,17 +108,8 @@ export default function LandingPage() {
             </motion.div>
           </div>
 
-          {/* ═══ RIGHT — capivara gigante por cima do background ═══ */}
+          {/* ═══ RIGHT — floating cards por cima da cena ═══ */}
           <div className="relative h-[600px] lg:h-[800px] overflow-visible">
-            {/* CAPIVARA — 1200px, sentada na boia */}
-            <motion.img
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
-              src="/capivara-removebg-preview.png"
-              alt="Capivara programando"
-              className="absolute bottom-[-180px] left-[-20%] w-[1200px] h-[1200px] object-contain object-bottom z-10"
-              style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }}
-            />
-
             {/* ─── floating: file tree ─── */}
             <motion.div
               initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5, duration: 0.5 }}
