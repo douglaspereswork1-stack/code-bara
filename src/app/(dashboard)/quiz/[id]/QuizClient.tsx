@@ -137,7 +137,7 @@ export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
                     <p className="text-sm font-medium text-white">{question.question}</p>
                     {!wasCorrect && (
                       <p className="text-xs text-[#94A3B8] mt-1">
-                        Sua resposta: <span className="text-[#F97316]">{options[answers[i]]?.text ?? 'Nenhuma'}</span>
+                        Sua resposta: <span className="text-[#F97316]">{answers[i] !== null ? options[answers[i]!]?.text : 'Nenhuma'}</span>
                         {' • '}Correta: <span className="text-[#10B981]">{options[correctIdx]?.text}</span>
                       </p>
                     )}
