@@ -12,11 +12,13 @@ import {
   Settings,
   Menu,
   X,
+  Library,
 } from 'lucide-react'
 
 const mainNav = [
   { href: '/dashboard', label: 'Início', icon: LayoutDashboard },
   { href: '/curso/dev-fullstack', label: 'Cursos', icon: BookOpen },
+  { href: '/biblioteca', label: 'Biblioteca', icon: Library },
   { href: '/desafios', label: 'Desafios', icon: Code2 },
   { href: '/rankings', label: 'Rankings', icon: Trophy },
   { href: '/projetos', label: 'Projetos', icon: FolderKanban },
