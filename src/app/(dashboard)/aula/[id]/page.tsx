@@ -14,8 +14,16 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
     include: {
       module: {
         include: {
-          lessons: { orderBy: { order: 'asc' }, select: { id: true, title: true, order: true } },
-          course: { select: { slug: true } },
+          course: {
+            include: {
+              modules: {
+                orderBy: { order: 'asc' },
+                include: {
+                  lessons: { orderBy: { order: 'asc' }, select: { id: true, title: true, order: true } },
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -23,9 +31,11 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
 
   if (!lesson) notFound()
 
-  const currentIndex = lesson.module.lessons.findIndex(l => l.id === id)
-  const prevLesson = currentIndex > 0 ? lesson.module.lessons[currentIndex - 1] : null
-  const nextLesson = currentIndex < lesson.module.lessons.length - 1 ? lesson.module.lessons[currentIndex + 1] : null
+  // Flatten all lessons across all modules for prev/next navigation
+  const allLessons = lesson.module.course.modules.flatMap(m => m.lessons)
+  const flatIndex = allLessons.findIndex(l => l.id === id)
+  const prevLesson = flatIndex > 0 ? allLessons[flatIndex - 1] : null
+  const nextLesson = flatIndex < allLessons.length - 1 ? allLessons[flatIndex + 1] : null
 
   let completed = false
   if (userId) {
