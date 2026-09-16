@@ -42,4 +42,13 @@ next-env.d.ts
 prisma/dev.db
 prisma/dev.db-journal
 
+# debug scripts (temporários — NÃO commitar)
+prisma/check-*.ts
+prisma/debug-*.ts
+prisma/test-*.ts
+prisma/seed-*.ts
+!prisma/seed.ts
+!prisma/seed-quizzes.ts
+!prisma/seed-content.ts
+
 .vercel

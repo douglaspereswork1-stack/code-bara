@@ -1,0 +1,632 @@
+[
+  {
+    "moduleSlug": "js-basics",
+    "title": "Quiz — JavaScript Basics",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "Qual keyword declara uma variável que pode ser reatribuída?",
+        "options": [
+          { "text": "const", "correct": false },
+          { "text": "let", "correct": true },
+          { "text": "var", "correct": false },
+          { "text": "define", "correct": false }
+        ],
+        "explanation": "let permite reatribuição, const não."
+      },
+      {
+        "order": 2,
+        "question": "Qual o resultado de: typeof null?",
+        "options": [
+          { "text": "\"null\"", "correct": false },
+          { "text": "\"object\"", "correct": true },
+          { "text": "\"undefined\"", "correct": false },
+          { "text": "\"boolean\"", "correct": false }
+        ],
+        "explanation": "Bug histórico do JavaScript — typeof null retorna \"object\"."
+      },
+      {
+        "order": 3,
+        "question": "Como declarar uma arrow function?",
+        "options": [
+          { "text": "function => {}", "correct": false },
+          { "text": "() => {}", "correct": true },
+          { "text": "function() => {}", "correct": false },
+          { "text": "=> function {}", "correct": false }
+        ],
+        "explanation": "Sintaxe correta: const fn = () => {}"
+      },
+      {
+        "order": 4,
+        "question": "O que console.log(0.1 + 0.2 === 0.3) imprime?",
+        "options": [
+          { "text": "true", "correct": false },
+          { "text": "false", "correct": true },
+          { "text": "undefined", "correct": false },
+          { "text": "TypeError", "correct": false }
+        ],
+        "explanation": "0.1 + 0.2 = 0.30000000000000004 em ponto flutuante."
+      },
+      {
+        "order": 5,
+        "question": "Qual método transforma string em array?",
+        "options": [
+          { "text": "string.toArray()", "correct": false },
+          { "text": "string.split()", "correct": true },
+          { "text": "string.divide()", "correct": false },
+          { "text": "string.toChars()", "correct": false }
+        ],
+        "explanation": "split() divide a string por delimitador e retorna array."
+      }
+    ]
+  },
+  {
+    "moduleSlug": "html-css",
+    "title": "Quiz — HTML & CSS",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "Qual tag cria um link?",
+        "options": [
+          { "text": "<link>", "correct": false },
+          { "text": "<a>", "correct": true },
+          { "text": "<href>", "correct": false },
+          { "text": "<url>", "correct": false }
+        ],
+        "explanation": "<link> é para CSS, <a> é para links."
+      },
+      {
+        "order": 2,
+        "question": "Qual propriedade CSS cria espaço interno?",
+        "options": [
+          { "text": "margin", "correct": false },
+          { "text": "padding", "correct": true },
+          { "text": "border", "correct": false },
+          { "text": "gap", "correct": false }
+        ],
+        "explanation": "Margin é externo, padding é interno."
+      },
+      {
+        "order": 3,
+        "question": "Display: flex torna o elemento...",
+        "options": [
+          { "text": "Invisível", "correct": false },
+          { "text": "Um container flexível", "correct": true },
+          { "text": "Bloco", "correct": false },
+          { "text": "Inline", "correct": false }
+        ],
+        "explanation": "Flex permite alinhar e distribuir filhos."
+      },
+      {
+        "order": 4,
+        "question": "Qual seletor tem MAIS especificidade?",
+        "options": [
+          { "text": ".classe", "correct": false },
+          { "text": "#id", "correct": true },
+          { "text": "elemento", "correct": false },
+          { "text": "*", "correct": false }
+        ],
+        "explanation": "#id (100) > .classe (10) > elemento (1) > * (0)."
+      },
+      {
+        "order": 5,
+        "question": "O que faz position: sticky?",
+        "options": [
+          { "text": "Fixo na tela", "correct": false },
+          { "text": "Fixo no scroll do pai", "correct": true },
+          { "text": "Absoluto", "correct": false },
+          { "text": "Relativo", "correct": false }
+        ],
+        "explanation": "Sticky \"gruda\" no scroll até atingir o offset."
+      }
+    ]
+  },
+  {
+    "moduleSlug": "git-github",
+    "title": "Quiz — Git & GitHub",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "Qual comando cria um branch?",
+        "options": [
+          { "text": "git branch", "correct": true },
+          { "text": "git checkout", "correct": false },
+          { "text": "git switch", "correct": false },
+          { "text": "git clone", "correct": false }
+        ],
+        "explanation": "git branch cria. checkout/switch muda de branch."
+      },
+      {
+        "order": 2,
+        "question": "git add . faz o quê?",
+        "options": [
+          { "text": "Commita tudo", "correct": false },
+          { "text": "Adiciona arquivos ao stage", "correct": true },
+          { "text": "Deleta arquivos", "correct": false },
+          { "text": "Mostra status", "correct": false }
+        ],
+        "explanation": "git add move para o stage. git commit salva."
+      },
+      {
+        "order": 3,
+        "question": "Como ver o histórico de commits?",
+        "options": [
+          { "text": "git log", "correct": true },
+          { "text": "git history", "correct": false },
+          { "text": "git show", "correct": false },
+          { "text": "git status", "correct": false }
+        ],
+        "explanation": "git log mostra todos os commits."
+      },
+      {
+        "order": 4,
+        "question": "O que resolve conflitos de merge?",
+        "options": [
+          { "text": "git merge --fix", "correct": false },
+          { "text": "Editar os arquivos e fazer commit", "correct": true },
+          { "text": "git pull", "correct": false },
+          { "text": "git reset", "correct": false }
+        ],
+        "explanation": "Conflitos precisam ser resolvidos manualmente no editor."
+      },
+      {
+        "order": 5,
+        "question": "git pull faz quê?",
+        "options": [
+          { "text": "Baixa e faz merge das mudanças", "correct": true },
+          { "text": "Sobe commits", "correct": false },
+          { "text": "Cria branch", "correct": false },
+          { "text": "Deleta branch", "correct": false }
+        ],
+        "explanation": "git pull = git fetch + git merge."
+      }
+    ]
+  },
+  {
+    "moduleSlug": "js-advanced",
+    "title": "Quiz — JavaScript Advanced",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "O que é closure?",
+        "options": [
+          { "text": "Uma função que acessa variáveis do escopo externo", "correct": true },
+          { "text": "Um tipo de loop", "correct": false },
+          { "text": "Um operador lógico", "correct": false },
+          { "text": "Uma forma de fechar o browser", "correct": false }
+        ],
+        "explanation": "Closure: função que \"lembra\" do escopo onde foi criada."
+      },
+      {
+        "order": 2,
+        "question": "O que Promise.all faz?",
+        "options": [
+          { "text": "Resolve a primeira Promise", "correct": false },
+          { "text": "Aguarda TODAS as Promises resolverem", "correct": true },
+          { "text": "Rejeita se uma falhar", "correct": false },
+          { "text": "Nenhuma das anteriores", "correct": false }
+        ],
+        "explanation": "Promise.all aguarda todas. Se uma falhar, rejeita todas."
+      },
+      {
+        "order": 3,
+        "question": "async/await é syntactic sugar para...",
+        "options": [
+          { "text": "Callbacks", "correct": false },
+          { "text": "Promises", "correct": true },
+          { "text": "Generators", "correct": false },
+          { "text": "Observables", "correct": false }
+        ],
+        "explanation": "await para uma Promise. async retorna uma Promise."
+      },
+      {
+        "order": 4,
+        "question": "O que é hoisting?",
+        "options": [
+          { "text": "Mover variáveis pro topo do escopo", "correct": true },
+          { "text": "Elevar o DOM", "correct": false },
+          { "text": "Criar closures", "correct": false },
+          { "text": "Tipagem dinâmica", "correct": false }
+        ],
+        "explanation": "var e function declarations são \"elevados\" no escopo."
+      },
+      {
+        "order": 5,
+        "question": "Qual é o output: [1,2,3].map(x => x * 2)?",
+        "options": [
+          { "text": "[1,2,3]", "correct": false },
+          { "text": "[2,4,6]", "correct": true },
+          { "text": "6", "correct": false },
+          { "text": "undefined", "correct": false }
+        ],
+        "explanation": "map transforma cada elemento e retorna novo array."
+      }
+    ]
+  },
+  {
+    "moduleSlug": "nodejs",
+    "title": "Quiz — Node.js",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "Node.js usa qual motor JS?",
+        "options": [
+          { "text": "SpiderMonkey", "correct": false },
+          { "text": "V8", "correct": true },
+          { "text": "Chakra", "correct": false },
+          { "text": "JavaScriptCore", "correct": false }
+        ],
+        "explanation": "V8 do Google Chrome, o mesmo do browser."
+      },
+      {
+        "order": 2,
+        "question": "O que é npm?",
+        "options": [
+          { "text": "Node Package Manager", "correct": true },
+          { "text": "New Project Manager", "correct": false },
+          { "text": "Node Program Manager", "correct": false },
+          { "text": "Network Package Manager", "correct": false }
+        ],
+        "explanation": "npm gerencia pacotes/dependências do Node."
+      },
+      {
+        "order": 3,
+        "question": "Express.js é um...",
+        "options": [
+          { "text": "Framework web", "correct": true },
+          { "text": "Banco de dados", "correct": false },
+          { "text": "Frontend framework", "correct": false },
+          { "text": "Test runner", "correct": false }
+        ],
+        "explanation": "Express é minimalista para criar APIs e sites."
+      },
+      {
+        "order": 4,
+        "question": "Middleware no Express...",
+        "options": [
+          { "text": "Roda antes da rota", "correct": true },
+          { "text": "Só roda em erro", "correct": false },
+          { "text": "Cria o HTML", "correct": false },
+          { "text": "Gerencia banco", "correct": false }
+        ],
+        "explanation": "Middleware intercepta requests antes de chegar na rota."
+      },
+      {
+        "order": 5,
+        "question": "Qual o método correto para rotas GET?",
+        "options": [
+          { "text": "app.get()", "correct": true },
+          { "text": "app.route()", "correct": false },
+          { "text": "app.fetch()", "correct": false },
+          { "text": "app.listen()", "correct": false }
+        ],
+        "explanation": "app.get() para GET, app.post() para POST, etc."
+      }
+    ]
+  },
+  {
+    "moduleSlug": "react-frontend",
+    "title": "Quiz — React & Frontend",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "O que JSX permite?",
+        "options": [
+          { "text": "HTML dentro de JavaScript", "correct": true },
+          { "text": "JavaScript dentro de HTML", "correct": false },
+          { "text": "CSS dentro de JavaScript", "correct": false },
+          { "text": "Python dentro de JavaScript", "correct": false }
+        ],
+        "explanation": "JSX = JavaScript XML — sintaxe que mistura HTML no JS."
+      },
+      {
+        "order": 2,
+        "question": "useState retorna...",
+        "options": [
+          { "text": "Um array com valor e setter", "correct": true },
+          { "text": "Um objeto com valor e setter", "correct": false },
+          { "text": "Apenas o valor", "correct": false },
+          { "text": "Uma Promise", "correct": false }
+        ],
+        "explanation": "const [state, setState] = useState(initialValue)"
+      },
+      {
+        "order": 3,
+        "question": "useEffect com [] roda...",
+        "options": [
+          { "text": "Em toda renderização", "correct": false },
+          { "text": "Uma vez, ao montar", "correct": true },
+          { "text": "Nunca", "correct": false },
+          { "text": "Ao desmontar", "correct": false }
+        ],
+        "explanation": "Array vazio = sem dependências = roda uma vez."
+      },
+      {
+        "order": 4,
+        "question": "Props são...",
+        "options": [
+          { "text": "Dados passados de pai para filho", "correct": true },
+          { "text": "Dados internos do componente", "correct": false },
+          { "text": "Variáveis globais", "correct": false },
+          { "text": "Estado do componente", "correct": false }
+        ],
+        "explanation": "Props são imutáveis. State é mutável pelo componente."
+      },
+      {
+        "order": 5,
+        "question": "Next.js File Router significa...",
+        "options": [
+          { "text": "Rotas baseadas em arquivos", "correct": true },
+          { "text": "Rotas manuais", "correct": false },
+          { "text": "Apenas SPA", "correct": false },
+          { "text": "Não usa rotas", "correct": false }
+        ],
+        "explanation": "Cada arquivo em app/ vira uma rota automaticamente."
+      }
+    ]
+  },
+  {
+    "moduleSlug": "python",
+    "title": "Quiz — Python",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "Qual a saída de type(10)?",
+        "options": [
+          { "text": "<class 'int'>", "correct": true },
+          { "text": "<class 'float'>", "correct": false },
+          { "text": "<class 'number'>", "correct": false },
+          { "text": "int", "correct": false }
+        ],
+        "explanation": "type() retorna o tipo completo: <class 'int'>"
+      },
+      {
+        "order": 2,
+        "question": "List comprehension correto:",
+        "options": [
+          { "text": "[x for x in range(5)]", "correct": true },
+          { "text": "[x each x in range(5)]", "correct": false },
+          { "text": "{x for x in range(5)}", "correct": false },
+          { "text": "(x for x in range(5))", "correct": false }
+        ],
+        "explanation": "[expressão for item in iterable]. O {} cria set."
+      },
+      {
+        "order": 3,
+        "question": "self em métodos de classe representa...",
+        "options": [
+          { "text": "A instância atual", "correct": true },
+          { "text": "A classe", "correct": false },
+          { "text": "O módulo", "correct": false },
+          { "text": "O construtor", "correct": false }
+        ],
+        "explanation": "self é a referência ao objeto que está chamando o método."
+      },
+      {
+        "order": 4,
+        "question": "O que pip install faz?",
+        "options": [
+          { "text": "Instala pacotes Python", "correct": true },
+          { "text": "Cria um ambiente virtual", "correct": false },
+          { "text": "Executa um script", "correct": false },
+          { "text": "Atualiza o Python", "correct": false }
+        ],
+        "explanation": "pip é o gerenciador de pacotes do Python."
+      },
+      {
+        "order": 5,
+        "question": "Qual a diferença entre append e extend?",
+        "options": [
+          { "text": "append adiciona item, extend adiciona itens de iterable", "correct": true },
+          { "text": "São iguais", "correct": false },
+          { "text": "append remove, extend adiciona", "correct": false },
+          { "text": "extend é mais rápido", "correct": false }
+        ],
+        "explanation": "append: [1].append([2]) = [1, [2]]. extend: [1].extend([2]) = [1, 2]"
+      }
+    ]
+  },
+  {
+    "moduleSlug": "banco-dados",
+    "title": "Quiz — Banco de Dados",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "PRIMARY KEY é...",
+        "options": [
+          { "text": "Identificador único de cada linha", "correct": true },
+          { "text": "Uma coluna que pode ser nula", "correct": false },
+          { "text": "Um tipo de dado", "correct": false },
+          { "text": "Um índice", "correct": false }
+        ],
+        "explanation": "Chave primária identifica cada registro de forma única."
+      },
+      {
+        "order": 2,
+        "question": "FOREIGN KEY referencia...",
+        "options": [
+          { "text": "Outra tabela", "correct": true },
+          { "text": "A mesma tabela", "correct": false },
+          { "text": "O schema", "correct": false },
+          { "text": "O banco", "correct": false }
+        ],
+        "explanation": "FK cria relacionamento entre tabelas."
+      },
+      {
+        "order": 3,
+        "question": "O que WHERE faz?",
+        "options": [
+          { "text": "Filtra linhas", "correct": true },
+          { "text": "Ordena resultados", "correct": false },
+          { "text": "Agrupa dados", "correct": false },
+          { "text": "Cria tabela", "correct": false }
+        ],
+        "explanation": "WHERE filtra com condição: WHERE nome = 'Ana'"
+      },
+      {
+        "order": 4,
+        "question": "INNER JOIN retorna...",
+        "options": [
+          { "text": "Apenas correspondentes em ambas tabelas", "correct": true },
+          { "text": "Todas as linhas da esquerda", "correct": false },
+          { "text": "Todas as linhas da direita", "correct": false },
+          { "text": "Todas as linhas", "correct": false }
+        ],
+        "explanation": "INNER = interseção. LEFT = tudo da esquerda."
+      },
+      {
+        "order": 5,
+        "question": "Prisma é um...",
+        "options": [
+          { "text": "ORM para Node.js", "correct": true },
+          { "text": "Banco de dados", "correct": false },
+          { "text": "Frontend framework", "correct": false },
+          { "text": "Test runner", "correct": false }
+        ],
+        "explanation": "Prisma mapeia tabelas para objetos JavaScript."
+      }
+    ]
+  },
+  {
+    "moduleSlug": "devops",
+    "title": "Quiz — DevOps",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "Docker container é...",
+        "options": [
+          { "text": "Instância de uma image", "correct": true },
+          { "text": "Uma máquina virtual", "correct": false },
+          { "text": "Um sistema operacional", "correct": false },
+          { "text": "Um banco de dados", "correct": false }
+        ],
+        "explanation": "Image = template. Container = instância rodando."
+      },
+      {
+        "order": 2,
+        "question": "CI/CD significa...",
+        "options": [
+          { "text": "Integração e Entrega Continua", "correct": true },
+          { "text": "Code Insert/Code Delete", "correct": false },
+          { "text": "Central de Infraestrutura", "correct": false },
+          { "text": "Computação em Nuvem", "correct": false }
+        ],
+        "explanation": "CI = build/testa a cada push. CD = deploy automático."
+      },
+      {
+        "order": 3,
+        "question": "Dockerfile define...",
+        "options": [
+          { "text": "Receita para criar uma image", "correct": true },
+          { "text": "Configuração do banco", "correct": false },
+          { "text": "Rotas da aplicação", "correct": false },
+          { "text": "Variáveis de ambiente", "correct": false }
+        ],
+        "explanation": "FROM, COPY, RUN, EXPOSE, CMD são comandos do Dockerfile."
+      },
+      {
+        "order": 4,
+        "question": "Vercel é...",
+        "options": [
+          { "text": "Plataforma de deploy", "correct": true },
+          { "text": "Banco de dados", "correct": false },
+          { "text": "Editor de código", "correct": false },
+          { "text": "Sistema operacional", "correct": false }
+        ],
+        "explanation": "Vercel faz deploy automático de apps frontend/fullstack."
+      },
+      {
+        "order": 5,
+        "question": "O que mantém containers isolados?",
+        "options": [
+          { "text": "Namespaces do Linux", "correct": true },
+          { "text": "Firewall", "correct": false },
+          { "text": "Antivírus", "correct": false },
+          { "text": "VPN", "correct": false }
+        ],
+        "explanation": "Namespaces e cgroups do Linux isolam processos/containers."
+      }
+    ]
+  },
+  {
+    "moduleSlug": "carreira",
+    "title": "Quiz — Carreira",
+    "passingScore": 60,
+    "xpReward": 30,
+    "questions": [
+      {
+        "order": 1,
+        "question": "Um bom portfólio deve ter...",
+        "options": [
+          { "text": "3-5 projetos relevantes com descrição", "correct": true },
+          { "text": "100 projetos pequenos", "correct": false },
+          { "text": "Apenas links de GitHub", "correct": false },
+          { "text": "Fotos pessoais", "correct": false }
+        ],
+        "explanation": "Qualidade > quantidade. Mostre problema resolvido."
+      },
+      {
+        "order": 2,
+        "question": "Na entrevista técnica, o mais importante é...",
+        "options": [
+          { "text": "Pensar em voz alta", "correct": true },
+          { "text": "Saber tudo de cabeça", "correct": false },
+          { "text": "Rapididade na resposta", "correct": false },
+          { "text": "Adivinhar a resposta", "correct": false }
+        ],
+        "explanation": "Entrevistadores querem ver seu processo de pensamento."
+      },
+      {
+        "order": 3,
+        "question": "80% dos problemas em projetos são...",
+        "options": [
+          { "text": "De comunicação", "correct": true },
+          { "text": "Técnicos", "correct": false },
+          { "text": "Financeiros", "correct": false },
+          { "text": "De design", "correct": false }
+        ],
+        "explanation": "Comunicação clara evita retrabalho e conflitos."
+      },
+      {
+        "order": 4,
+        "question": "Estudo consistente é mais eficaz que...",
+        "options": [
+          { "text": "Estudar 10h no fim de semana", "correct": true },
+          { "text": "Praticar projetos", "correct": false },
+          { "text": "Ler documentação", "correct": false },
+          { "text": "Assistir videoaulas", "correct": false }
+        ],
+        "explanation": "30 min/dia > 10h no sábado. Consistência vence intensidade."
+      },
+      {
+        "order": 5,
+        "question": "roadmap.sh mostra...",
+        "options": [
+          { "text": "Caminhos de carreira em tech", "correct": true },
+          { "text": "Tutoriais de Python", "correct": false },
+          { "text": "Vagas de emprego", "correct": false },
+          { "text": "Preços de cursos", "correct": false }
+        ],
+        "explanation": "Mapas visuais dos caminhos: frontend, backend, DevOps, etc."
+      }
+    ]
+  }
+]
