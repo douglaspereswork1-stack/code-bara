@@ -90,7 +90,7 @@ export default async function DashboardPage() {
             />
           </div>
 
-          <ContinueLearning completed={stats.completedLessons} total={stats.totalLessons} progress={stats.progress} />
+          <ContinueLearning userId={userId} completed={stats.completedLessons} total={stats.totalLessons} progress={stats.progress} />
 
           <XpChart currentXp={stats.xp} level={stats.level} />
         </div>
