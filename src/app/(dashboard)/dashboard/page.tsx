@@ -5,7 +5,7 @@ import { prisma } from '@/lib/db'
 import { WelcomeBanner } from '@/components/dashboard/WelcomeBanner'
 import { StatsCard } from '@/components/dashboard/StatsCard'
 import { ContinueLearning } from '@/components/dashboard/ContinueLearning'
-import { SpacedReviews, RecentAchievements } from '@/components/dashboard/ReviewsAchievements'
+import { XpChart } from '@/components/dashboard/XpChart'
 import { RightWidgets } from '@/components/dashboard/RightWidgets'
 
 export default async function DashboardPage() {
@@ -20,7 +20,6 @@ export default async function DashboardPage() {
     progress: 0,
     completedLessons: 0,
     totalLessons: 0,
-    quizScore: 0,
   }
 
   if (userId) {
@@ -49,7 +48,6 @@ export default async function DashboardPage() {
       progress,
       completedLessons: completedCount,
       totalLessons,
-      quizScore: 0,
     }
   }
 
@@ -94,10 +92,7 @@ export default async function DashboardPage() {
 
           <ContinueLearning completed={stats.completedLessons} total={stats.totalLessons} progress={stats.progress} />
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <SpacedReviews />
-            <RecentAchievements />
-          </div>
+          <XpChart currentXp={stats.xp} level={stats.level} />
         </div>
 
         <div className="hidden lg:block">

@@ -3,10 +3,7 @@ import { prisma } from '@/lib/db'
 
 export async function POST(req: NextRequest) {
   const { userId } = await req.json()
-
-  if (!userId) {
-    return NextResponse.json({ error: 'userId required' }, { status: 400 })
-  }
+  if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -14,51 +11,33 @@ export async function POST(req: NextRequest) {
   const streak = await prisma.streak.findUnique({ where: { userId } })
 
   if (!streak) {
-    // Create new streak
-    const newStreak = await prisma.streak.create({
-      data: {
-        userId,
-        current: 1,
-        best: 1,
-        lastStudyDate: today,
-      },
+    await prisma.streak.create({
+      data: { userId, current: 1, best: 1, lastStudyDate: today },
     })
-    return NextResponse.json(newStreak)
+    return NextResponse.json({ current: 1, best: 1 })
   }
 
-  const lastStudy = streak.lastStudyDate
-    ? new Date(streak.lastStudyDate)
-    : null
-  lastStudy?.setHours(0, 0, 0, 0)
+  const last = streak.lastStudyDate ? new Date(streak.lastStudyDate) : null
+  if (last) last.setHours(0, 0, 0, 0)
 
-  const diffDays = lastStudy
-    ? Math.floor((today.getTime() - lastStudy.getTime()) / (1000 * 60 * 60 * 24))
-    : null
+  const diffDays = last ? Math.floor((today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24)) : 999
 
-  let newCurrent = streak.current
-  let newBest = streak.best
+  let current = streak.current
+  let best = streak.best
 
-  if (diffDays === null || diffDays > 0) {
-    // Study today for the first time
-    if (diffDays === 1) {
-      // Consecutive day
-      newCurrent = streak.current + 1
-    } else if (diffDays === null || diffDays > 1) {
-      // Streak broken
-      newCurrent = 1
-    }
-    newBest = Math.max(newBest, newCurrent)
+  if (diffDays === 0) {
+    // Already studied today, no change
+  } else if (diffDays === 1) {
+    current += 1
+    if (current > best) best = current
+  } else {
+    current = 1
   }
-  // If diffDays === 0, already studied today, no change
 
-  const updated = await prisma.streak.update({
+  await prisma.streak.update({
     where: { userId },
-    data: {
-      current: newCurrent,
-      best: newBest,
-      lastStudyDate: today,
-    },
+    data: { current, best, lastStudyDate: today },
   })
 
-  return NextResponse.json(updated)
+  return NextResponse.json({ current, best })
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CheckCircle, Circle, Clock, Zap, ChevronRight, Code2, Sparkles } from 'lucide-react'
+import { CheckCircle, Circle, Clock, Zap, ChevronRight, Code2, Sparkles, Award, HelpCircle } from 'lucide-react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
@@ -26,6 +26,7 @@ export default async function CoursePage() {
         orderBy: { order: 'asc' },
         include: {
           lessons: { orderBy: { order: 'asc' } },
+          quizzes: { include: { results: userId ? { where: { userId } } : false } },
         },
       },
     },
@@ -98,6 +99,10 @@ export default async function CoursePage() {
           const modCompleted = mod.lessons.filter(l => completedSet.has(l.id)).length
           const modTotal = mod.lessons.length
           const modPercent = modTotal > 0 ? Math.round((modCompleted / modTotal) * 100) : 0
+          const isModComplete = modCompleted === modTotal && modTotal > 0
+          const quiz = mod.quizzes[0]
+          const quizResult = quiz?.results[0]
+          const hasCertificate = isModComplete
 
           return (
             <div key={mod.id} className="group rounded-2xl bg-[#0D1528] border border-white/[0.06] overflow-hidden hover:border-white/10 transition">
@@ -144,6 +149,51 @@ export default async function CoursePage() {
                     </Link>
                   )
                 })}
+
+                {/* Quiz row */}
+                {quiz && (
+                  <Link
+                    href={`/quiz/${quiz.id}`}
+                    className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.04] transition border-t border-white/[0.06]"
+                  >
+                    {quizResult ? (
+                      <CheckCircle className="w-4 h-4 text-[#10B981] shrink-0" />
+                    ) : (
+                      <HelpCircle className="w-4 h-4 text-[#F97316] shrink-0" />
+                    )}
+                    <span className="text-sm shrink-0">📝</span>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-sm font-medium ${quizResult ? 'text-[#10B981]' : 'text-white'}`}>
+                        {quiz.title}
+                      </div>
+                      <div className="text-xs text-[#64748B]">
+                        {quizResult
+                          ? `Nota: ${quizResult.score}% • +${quizResult.xpEarned} XP`
+                          : `5 perguntas • +${quiz.xpReward} XP`
+                        }
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-[#64748B] group-hover:text-white transition shrink-0" />
+                  </Link>
+                )}
+
+                {/* Certificate row */}
+                {hasCertificate && (
+                  <a
+                    href={`/api/certificate?moduleId=${mod.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.04] transition border-t border-[#FACC15]/20 bg-[#FACC15]/[0.02]"
+                  >
+                    <Award className="w-4 h-4 text-[#FACC15] shrink-0" />
+                    <span className="text-sm shrink-0">🎓</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-[#FACC15]">Certificado de Conclusão</div>
+                      <div className="text-xs text-[#64748B]">Baixe seu certificado HTML</div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-[#FACC15] group-hover:text-white transition shrink-0" />
+                  </a>
+                )}
               </div>
             </div>
           )

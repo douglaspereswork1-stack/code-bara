@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, CheckCircle, Clock, Zap } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle, Clock, Zap, ExternalLink, BookOpen } from 'lucide-react'
 
 type LessonProps = {
   lesson: {
@@ -56,7 +56,34 @@ export default function LessonClient({ lesson, courseSlug, prevLessonId, nextLes
       </div>
 
       {/* Content */}
-      <div className="prose prose-invert max-w-none text-[#E2E8F0] leading-relaxed" dangerouslySetInnerHTML={{ __html: renderMarkdown(lesson.content) }} />
+      <div
+        className="prose prose-invert max-w-none text-[#E2E8F0] leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: renderMarkdown(lesson.content) }}
+      />
+
+      {/* References section */}
+      {lesson.content.includes('## Referências') && (
+        <div className="rounded-xl border border-[#22D3EE]/20 bg-[#22D3EE]/[0.03] p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <BookOpen className="w-4 h-4 text-[#22D3EE]" />
+            <h3 className="text-sm font-bold text-[#22D3EE]">Referências</h3>
+          </div>
+          <div className="space-y-2">
+            {extractReferences(lesson.content).map((ref, i) => (
+              <a
+                key={i}
+                href={ref.url || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-[#94A3B8] hover:text-[#22D3EE] transition"
+              >
+                <ExternalLink className="w-3 h-3 shrink-0" />
+                {ref.text}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Mark complete */}
       <div className="flex items-center justify-between p-4 rounded-xl border border-white/[0.06] bg-[#0D1528]">
@@ -100,14 +127,33 @@ export default function LessonClient({ lesson, courseSlug, prevLessonId, nextLes
   )
 }
 
+function extractReferences(content: string): { text: string; url?: string }[] {
+  const refs: { text: string; url?: string }[] = []
+  const lines = content.split('\n')
+  let inRefs = false
+  for (const line of lines) {
+    if (line.includes('## Referências')) { inRefs = true; continue }
+    if (inRefs && line.startsWith('#')) break
+    if (inRefs && line.startsWith('- Livro:')) {
+      const bookName = line.replace('- Livro:', '').trim()
+      const slug = bookName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      refs.push({ text: `${bookName} (Biblioteca)`, url: `/biblioteca?search=${encodeURIComponent(slug)}` })
+    } else if (inRefs && line.startsWith('- ')) {
+      refs.push({ text: line.replace('- ', '').trim() })
+    }
+  }
+  return refs
+}
+
 function renderMarkdown(md: string): string {
   return md
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="bg-white/[0.04] border border-white/[0.08] rounded-xl p-4 overflow-x-auto my-4"><code class="text-sm">$2</code></pre>')
+    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="bg-white/[0.04] border border-white/[0.08] rounded-xl p-4 overflow-x-auto my-4"><code class="text-sm text-[#E2E8F0]">$2</code></pre>')
     .replace(/`([^`]+)`/g, '<code class="bg-white/[0.06] px-1.5 py-0.5 rounded text-sm text-[#22D3EE]">$1</code>')
     .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold mt-6 mb-2 text-white">$1</h3>')
     .replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold mt-8 mb-3 text-white">$1</h2>')
     .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mb-4 text-white">$1</h1>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#22D3EE] hover:underline">$1</a>')
     .replace(/\| (.+) \|/g, (match) => {
       const cells = match.split('|').filter(Boolean).map(c => c.trim())
       return '<tr>' + cells.map(c => `<td class="px-3 py-1 border border-white/[0.08]">${c}</td>`).join('') + '</tr>'

@@ -1,7 +1,8 @@
 "use client"
 import { useState } from 'react'
-import { Search, Bell, Sun, Moon, ChevronDown, LogOut } from 'lucide-react'
+import { Search, Bell, ChevronDown, LogOut } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
+import { ThemeToggle } from './ThemeToggle'
 
 export function Topbar() {
   const { data: session } = useSession()
@@ -40,14 +41,7 @@ export function Topbar() {
           <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#F97316] border-2 border-[#050914]" />
         </button>
 
-        <button
-          aria-label="Alternar tema"
-          className="w-9 h-9 rounded-xl bg-[#0D1528] border border-white/[0.06] hidden sm:flex items-center justify-center text-[#94A3B8] hover:text-white transition"
-          title="Tema"
-          onClick={() => {}}
-        >
-          <Sun className="w-4 h-4" />
-        </button>
+        <ThemeToggle />
 
         {/* avatar */}
         <div className="relative">

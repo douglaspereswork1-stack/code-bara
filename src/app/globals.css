@@ -107,3 +107,24 @@ code { font-family: var(--font-mono, ui-monospace, monospace); }
 /* Neon text glow — subtle */
 .text-glow-cyan { text-shadow: 0 0 20px rgba(34,211,238,0.35); }
 .text-glow-violet { text-shadow: 0 0 20px rgba(139,92,246,0.35); }
+
+/* ===== LIGHT MODE ===== */
+html.light {
+  --color-background: #F8FAFC;
+  --color-background-secondary: #F1F5F9;
+  --color-card: #FFFFFF;
+  --color-card-elevated: #F8FAFC;
+  --color-card-foreground: #0F172A;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
+  --color-foreground: #0F172A;
+  --color-foreground-secondary: #475569;
+  --color-foreground-muted: #94A3B8;
+  --color-muted: #F1F5F9;
+  --color-muted-foreground: #475569;
+}
+html.light body { background: #F8FAFC; color: #0F172A; }
+html.light ::-webkit-scrollbar-track { background: #F1F5F9; }
+html.light ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
+html.light .prose { color: #1E293B; }
+html.light pre { background: #1E293B !important; color: #E2E8F0; }

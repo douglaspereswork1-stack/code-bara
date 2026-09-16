@@ -1,0 +1,25 @@
+{
+  "name": "Code.Zen — FullStack Learning",
+  "short_name": "Code.Zen",
+  "description": "Aprenda FullStack do Zero ao Emprego com projetos práticos e gamificação",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#050914",
+  "theme_color": "#050914",
+  "orientation": "any",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
