@@ -16,12 +16,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'lessonId required' }, { status: 400 })
   }
 
+  // Check if already completed to prevent double XP
+  const existing = await prisma.progress.findUnique({
+    where: { userId_lessonId: { userId, lessonId } },
+    select: { completed: true },
+  })
+
+  const wasAlreadyCompleted = existing?.completed ?? false
+
   const progress = await prisma.progress.upsert({
     where: {
-      userId_lessonId: {
-        userId,
-        lessonId,
-      },
+      userId_lessonId: { userId, lessonId },
     },
     update: {
       completed,
@@ -37,8 +42,8 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  // Award XP if completed
-  if (completed) {
+  // Award XP only if completing for the first time
+  if (completed && !wasAlreadyCompleted) {
     const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } })
     if (lesson) {
       await prisma.xpRecord.upsert({
@@ -52,6 +57,17 @@ export async function POST(req: NextRequest) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId }),
+      })
+    }
+  }
+
+  // If un-completing, remove XP
+  if (!completed && wasAlreadyCompleted) {
+    const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } })
+    if (lesson) {
+      await prisma.xpRecord.update({
+        where: { userId },
+        data: { total: { decrement: lesson.xpReward } },
       })
     }
   }
