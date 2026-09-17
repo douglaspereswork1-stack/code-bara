@@ -1,7 +1,8 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { canAccessModule } from '@/lib/access'
 import LessonClient from './LessonClient'
 
 export default async function LessonPage({ params }: { params: Promise<{ id: string }> }) {
@@ -30,6 +31,10 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
   })
 
   if (!lesson) notFound()
+
+  // Paywall por módulo (o middleware só barra rotas 100% pagas)
+  const isPaid = Boolean((session?.user as unknown as { isPaid?: boolean })?.isPaid)
+  if (!canAccessModule(lesson.module.order, isPaid)) redirect('/pagamento?bloqueado=aula')
 
   // Flatten all lessons across all modules for prev/next navigation
   const allLessons = lesson.module.course.modules.flatMap(m => m.lessons)

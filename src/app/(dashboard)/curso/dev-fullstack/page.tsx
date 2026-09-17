@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { CheckCircle, Circle, Clock, Zap, ChevronRight, Code2, Sparkles, Award, HelpCircle } from 'lucide-react'
+import { CheckCircle, Circle, Clock, Zap, ChevronRight, Code2, Sparkles, Award, HelpCircle, Lock } from 'lucide-react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { canAccessModule, isFreeModule } from '@/lib/access'
 
 const TYPE_LABELS: Record<string, { label: string; icon: string; color: string }> = {
   THEORY: { label: 'Teoria', icon: '📖', color: 'text-[#3B82F6]' },
@@ -18,6 +19,7 @@ const TYPE_LABELS: Record<string, { label: string; icon: string; color: string }
 export default async function CoursePage() {
   const session = await getServerSession(authOptions)
   const userId = (session?.user as unknown as { id: string })?.id
+  const isPaid = Boolean((session?.user as unknown as { isPaid?: boolean })?.isPaid)
 
   const course = await prisma.course.findUnique({
     where: { slug: 'dev-fullstack' },
@@ -93,6 +95,17 @@ export default async function CoursePage() {
         <div className="text-2xl font-black text-white">{progressPercent}%</div>
       </div>
 
+      {/* upgrade (só quem ainda não pagou) */}
+      {!isPaid && (
+        <Link href="/pagamento" className="flex flex-wrap items-center gap-3 rounded-2xl border border-[#FACC15]/30 bg-[#FACC15]/[0.06] p-4 hover:bg-[#FACC15]/10 transition">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FACC15]/15 text-[#FACC15] text-[11px] font-bold uppercase tracking-wide">🔥 Promoção de lançamento</span>
+          <span className="text-sm text-white flex-1 min-w-[200px]">
+            O módulo 1 é <span className="font-bold text-[#10B981]">grátis</span>. Desbloqueie os outros {course.modules.filter(m => !isFreeModule(m.order)).length} módulos por <span className="font-black"><span className="text-[#FACC15]">12x</span> de R$ 75</span>
+          </span>
+          <span className="inline-flex items-center gap-1 text-sm font-bold text-[#FACC15]">Desbloquear <ChevronRight className="w-4 h-4" /></span>
+        </Link>
+      )}
+
       {/* modules */}
       <div className="space-y-4">
         {course.modules.map((mod) => {
@@ -103,15 +116,21 @@ export default async function CoursePage() {
           const quiz = mod.quizzes[0]
           const quizResult = quiz?.results[0]
           const hasCertificate = isModComplete
+          const locked = !canAccessModule(mod.order, isPaid)
+          const free = isFreeModule(mod.order)
 
           return (
-            <div key={mod.id} className="group rounded-2xl bg-[#0D1528] border border-white/[0.06] overflow-hidden hover:border-white/10 transition">
+            <div key={mod.id} className={`group rounded-2xl bg-[#0D1528] border border-white/[0.06] overflow-hidden hover:border-white/10 transition ${locked ? 'opacity-75' : ''}`}>
               <div className="p-5 flex items-center gap-4">
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#3B82F6]/20 to-[#8B5CF6]/20 border border-[#3B82F6]/20 flex items-center justify-center font-black text-[#22D3EE] shrink-0">
-                  {String(mod.order).padStart(2, '0')}
+                  {locked ? <Lock className="w-4 h-4 text-[#94A3B8]" /> : String(mod.order).padStart(2, '0')}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-bold text-white">{mod.title}</h2>
+                  <h2 className="font-bold text-white flex items-center gap-2">
+                    {mod.title}
+                    {free && !isPaid && <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">Grátis</span>}
+                    {locked && <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#FACC15]/15 text-[#FACC15] border border-[#FACC15]/30">Premium</span>}
+                  </h2>
                   <p className="text-xs text-[#94A3B8] truncate">{mod.description}</p>
                 </div>
                 <div className="hidden sm:block text-right shrink-0">
@@ -133,12 +152,14 @@ export default async function CoursePage() {
                   return (
                     <Link
                       key={lesson.id}
-                      href={`/aula/${lesson.id}`}
+                      href={locked ? '/pagamento' : `/aula/${lesson.id}`}
                       className={`flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.04] transition ${i < mod.lessons.length - 1 ? 'border-b border-white/[0.04]' : ''}`}
                     >
-                      {done
-                        ? <CheckCircle className="w-4 h-4 text-[#10B981] shrink-0" />
-                        : <Circle className="w-4 h-4 text-[#64748B] shrink-0" />
+                      {locked
+                        ? <Lock className="w-4 h-4 text-[#64748B] shrink-0" />
+                        : done
+                          ? <CheckCircle className="w-4 h-4 text-[#10B981] shrink-0" />
+                          : <Circle className="w-4 h-4 text-[#64748B] shrink-0" />
                       }
                       <span className="text-sm shrink-0">{type.icon}</span>
                       <div className="flex-1 min-w-0">
@@ -153,10 +174,12 @@ export default async function CoursePage() {
                 {/* Quiz row */}
                 {quiz && (
                   <Link
-                    href={`/quiz/${quiz.id}`}
+                    href={locked ? '/pagamento' : `/quiz/${quiz.id}`}
                     className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.04] transition border-t border-white/[0.06]"
                   >
-                    {quizResult ? (
+                    {locked ? (
+                      <Lock className="w-4 h-4 text-[#64748B] shrink-0" />
+                    ) : quizResult ? (
                       <CheckCircle className="w-4 h-4 text-[#10B981] shrink-0" />
                     ) : (
                       <HelpCircle className="w-4 h-4 text-[#F97316] shrink-0" />

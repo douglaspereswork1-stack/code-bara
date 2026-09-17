@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import { PAID_ONLY_PREFIXES } from '@/lib/access'
 
 export async function middleware(request: NextRequest) {
   const token = await getToken({
@@ -23,8 +24,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Se tem token mas não pagou e tenta acessar rota protegida
-  const protectedRoutes = ['/dashboard', '/curso', '/aula', '/quiz', '/desafios', '/rankings', '/projetos', '/comunidade', '/settings']
+  // Só estas rotas exigem pagamento aqui. /dashboard, /curso, /aula, /quiz e /settings abrem
+  // pra qualquer logado — o módulo grátis é liberado e o resto é trancado NA PÁGINA
+  // (src/lib/access.ts), porque o middleware não enxerga a que módulo a aula pertence.
+  const protectedRoutes = PAID_ONLY_PREFIXES
   const isProtectedRoute = protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + '/')
   )

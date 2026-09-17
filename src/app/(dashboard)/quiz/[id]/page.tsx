@@ -1,7 +1,8 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { canAccessModule } from '@/lib/access'
 import QuizClient from './QuizClient'
 
 export default async function QuizPage({ params }: { params: Promise<{ id: string }> }) {
@@ -21,6 +22,9 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
   })
 
   if (!quiz) notFound()
+
+  const isPaid = Boolean((session?.user as unknown as { isPaid?: boolean })?.isPaid)
+  if (!canAccessModule(quiz.module.order, isPaid)) redirect('/pagamento?bloqueado=quiz')
 
   return (
     <QuizClient
