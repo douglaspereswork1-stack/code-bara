@@ -1,11 +1,21 @@
 "use client"
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { motion } from 'framer-motion'
 import { Lock, Zap, Code2, Users, BookOpen, Trophy, CheckCircle, CreditCard, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function PagamentoPage() {
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const { data: session } = useSession()
+
+  // Quem chega aqui com cookie velho mas já pagou (webhook processou depois do
+  // redirect do MP) não pode ver "pague de novo": a sessão fresca diz isPaid=true.
+  useEffect(() => {
+    if ((session?.user as { isPaid?: boolean } | undefined)?.isPaid) router.replace('/dashboard')
+  }, [session, router])
 
   async function handlePay() {
     setLoading(true)
