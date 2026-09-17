@@ -128,3 +128,18 @@ html.light ::-webkit-scrollbar-track { background: #F1F5F9; }
 html.light ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
 html.light .prose { color: #1E293B; }
 html.light pre { background: #1E293B !important; color: #E2E8F0; }
+
+/* ===== /pagamento — tela de desbloqueio (src/components/unlock) ===== */
+@keyframes cz-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes cz-breathe { 0%, 100% { box-shadow: 0 0 24px 0 rgba(37, 231, 247, 0.28), 0 8px 32px -8px rgba(139, 92, 246, 0.5); } 50% { box-shadow: 0 0 40px 4px rgba(37, 231, 247, 0.42), 0 8px 40px -6px rgba(139, 92, 246, 0.65); } }
+@keyframes cz-path-light { 0% { top: -20%; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+@keyframes cz-particle { 0% { transform: translateY(0) scale(1); opacity: 0; } 20% { opacity: 0.9; } 100% { transform: translateY(-140px) scale(0.4); opacity: 0; } }
+@keyframes cz-token { 0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); opacity: 0.35; } 50% { transform: translateY(-12px) rotate(var(--rot, 0deg)); opacity: 0.6; } }
+.cz-float { animation: cz-float 6s ease-in-out infinite; }
+.cz-breathe { animation: cz-breathe 3.2s ease-in-out infinite; }
+.cz-path-light { animation: cz-path-light 4s linear infinite; }
+.cz-particle { animation: cz-particle var(--dur, 9s) linear infinite; animation-delay: var(--delay, 0s); }
+.cz-token { animation: cz-token var(--dur, 7s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+@media (prefers-reduced-motion: reduce) {
+  .cz-float, .cz-breathe, .cz-path-light, .cz-particle, .cz-token { animation: none !important; }
+}
