@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { LessonMarkdown } from '@/components/lesson/LessonMarkdown'
 import { ArrowLeft, ArrowRight, CheckCircle, Clock, Zap, ExternalLink, BookOpen } from 'lucide-react'
 
 type LessonProps = {
@@ -58,8 +59,9 @@ export default function LessonClient({ lesson, courseSlug, prevLessonId, nextLes
       {/* Content */}
       <div
         className="prose prose-invert max-w-none text-[#E2E8F0] leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: renderMarkdown(lesson.content) }}
-      />
+      >
+        <LessonMarkdown content={lesson.content} />
+      </div>
 
       {/* References section */}
       {lesson.content.includes('## Referências') && (
@@ -143,21 +145,4 @@ function extractReferences(content: string): { text: string; url?: string }[] {
     }
   }
   return refs
-}
-
-function renderMarkdown(md: string): string {
-  return md
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="bg-white/[0.04] border border-white/[0.08] rounded-xl p-4 overflow-x-auto my-4"><code class="text-sm text-[#E2E8F0]">$2</code></pre>')
-    .replace(/`([^`]+)`/g, '<code class="bg-white/[0.06] px-1.5 py-0.5 rounded text-sm text-[#22D3EE]">$1</code>')
-    .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold mt-6 mb-2 text-white">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold mt-8 mb-3 text-white">$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mb-4 text-white">$1</h1>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#22D3EE] hover:underline">$1</a>')
-    .replace(/\| (.+) \|/g, (match) => {
-      const cells = match.split('|').filter(Boolean).map(c => c.trim())
-      return '<tr>' + cells.map(c => `<td class="px-3 py-1 border border-white/[0.08]">${c}</td>`).join('') + '</tr>'
-    })
-    .replace(/^- (.+)$/gm, '<li class="ml-4 text-[#CBD5E1]">$1</li>')
-    .replace(/\n\n/g, '<br/><br/>')
 }

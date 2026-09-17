@@ -143,3 +143,6 @@ html.light pre { background: #1E293B !important; color: #E2E8F0; }
 @media (prefers-reduced-motion: reduce) {
   .cz-float, .cz-breathe, .cz-path-light, .cz-particle, .cz-token { animation: none !important; }
 }
+
+/* highlight.js dentro do LessonMarkdown: o container já tem fundo/padding */
+.lesson-md pre code.hljs { background: transparent; padding: 0; }
