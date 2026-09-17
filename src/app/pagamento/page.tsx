@@ -59,10 +59,15 @@ export default function PagamentoPage() {
 
           {/* preço */}
           <div className="p-8 text-center border-b border-white/[0.06]">
-            <div className="text-5xl font-black text-white">
-              R$ 899<sup className="text-2xl">,99</sup>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FACC15]/15 border border-[#FACC15]/40 text-[#FACC15] text-[11px] font-bold uppercase tracking-wide">
+              🔥 Promoção de lançamento
+            </span>
+            <div className="mt-3 flex items-end justify-center gap-1.5">
+              <span className="text-2xl font-black text-[#FACC15] leading-none mb-1">12x</span>
+              <span className="text-5xl font-black text-white leading-none">R$ 75</span>
             </div>
-            <p className="text-sm text-[#94A3B8] mt-2">Pagamento único • Acesso vitalício</p>
+            <p className="text-sm text-[#94A3B8] mt-2">no cartão • ou <span className="text-white font-semibold">R$ 899,99</span> no Pix</p>
+            <p className="text-xs text-[#64748B] mt-1">Pagamento único • Acesso vitalício</p>
           </div>
 
           {/* features */}

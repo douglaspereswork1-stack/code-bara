@@ -36,6 +36,9 @@ export async function POST() {
         },
       ],
       external_reference: userId,
+      // A landing anuncia 12x — o checkout precisa oferecer até 12 parcelas.
+      // "Sem juros" depende da configuração da conta MP, não daqui.
+      payment_methods: { installments: 12 },
       back_urls: {
         success: `${process.env.NEXTAUTH_URL}/pagamento/sucesso`,
         failure: `${process.env.NEXTAUTH_URL}/pagamento/erro`,

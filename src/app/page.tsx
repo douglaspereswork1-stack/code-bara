@@ -66,7 +66,13 @@ export default function LandingPage() {
               ))}
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mt-8 flex flex-wrap gap-3">
+            <motion.a href="#pagamento" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }} className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FACC15]/10 border border-[#FACC15]/40 hover:bg-[#FACC15]/15 transition">
+              <span className="text-[10px] font-bold uppercase tracking-wide text-[#FACC15]">🔥 Promoção de lançamento</span>
+              <span className="text-sm font-black text-white"><span className="text-[#FACC15]">12x</span> de R$ 75</span>
+              <span className="text-xs text-[#94A3B8]">ou R$ 899,99 no Pix</span>
+            </motion.a>
+
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mt-4 flex flex-wrap gap-3">
               <Link href="/register" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#22D3EE] via-[#3B82F6] to-[#8B5CF6] text-white font-bold shadow-lg shadow-[#3B82F6]/25 hover:brightness-110 transition text-sm">
                 <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center"><Play className="w-3 h-3 text-[#3B82F6] fill-[#3B82F6]" /></span> Começar Agora <ArrowRight className="w-4 h-4" />
               </Link>
@@ -220,7 +226,14 @@ export default function LandingPage() {
                 <p className="text-sm text-[#94A3B8] mt-2">Acesso vitalício a toda a plataforma</p>
 
                 <div className="mt-6">
-                  <div className="text-4xl font-black text-white">R$ 899<span className="text-lg text-[#94A3B8]">,99</span></div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FACC15]/15 border border-[#FACC15]/40 text-[#FACC15] text-[11px] font-bold uppercase tracking-wide">
+                    🔥 Promoção de lançamento
+                  </span>
+                  <div className="mt-3 flex items-end justify-center gap-1.5">
+                    <span className="text-2xl font-black text-[#FACC15] leading-none mb-1">12x</span>
+                    <span className="text-5xl font-black text-white leading-none">R$ 75</span>
+                  </div>
+                  <div className="text-sm text-[#94A3B8] mt-2">no cartão • ou <span className="text-white font-semibold">R$ 899,99</span> no Pix</div>
                   <div className="text-xs text-[#64748B] mt-1">Pagamento único • Acesso vitalício</div>
                 </div>
 
