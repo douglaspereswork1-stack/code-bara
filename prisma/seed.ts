@@ -7,7 +7,9 @@ async function main() {
   console.log('🌱 Seeding database...')
 
   // 1. Criar usuário admin
-  const adminPassword = await hash('admin123', 12)
+  // Senha nunca no repo (é público). Sem SEED_ADMIN_PASS, gera uma aleatória
+  // descartável — o admin existe, mas ninguém loga com senha conhecida.
+  const adminPassword = await hash(process.env.SEED_ADMIN_PASS ?? crypto.randomUUID(), 12)
   const admin = await prisma.user.upsert({
     where: { email: 'admin@codezen.dev' },
     update: {},

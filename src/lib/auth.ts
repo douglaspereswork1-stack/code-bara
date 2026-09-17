@@ -42,8 +42,9 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user }) {
       if (user) token.sub = user.id
-      // Busca isPaid do DB no primeiro login do token
-      if (token.sub && token.isPaid === undefined) {
+      // Reconsulta o DB enquanto não pagou — vira true no request seguinte ao webhook,
+      // sem exigir logout/login. Usuário pago não gera query.
+      if (token.sub && !(token as unknown as { isPaid?: boolean }).isPaid) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
           select: { isPaid: true },
