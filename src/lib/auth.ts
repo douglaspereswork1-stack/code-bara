@@ -42,14 +42,19 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user }) {
       if (user) token.sub = user.id
-      // Reconsulta o DB enquanto não pagou — vira true no request seguinte ao webhook,
-      // sem exigir logout/login. Usuário pago não gera query.
-      if (token.sub && !(token as unknown as { isPaid?: boolean }).isPaid) {
+      const t = token as unknown as { isPaid?: boolean; chk?: number }
+      // Reconsulta o DB: sempre enquanto não pagou (vira true no request seguinte ao
+      // webhook, sem relogar) e, pra quem já pagou, a cada 10 min — assim um usuário
+      // apagado/bloqueado perde a sessão em minutos, não em 30 dias.
+      const stale = !t.chk || Date.now() - t.chk > 10 * 60 * 1000
+      if (token.sub && (!t.isPaid || stale)) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
           select: { isPaid: true },
         })
-        ;(token as unknown as { isPaid: boolean }).isPaid = dbUser?.isPaid ?? false
+        if (!dbUser) return {} // token vazio = deslogado (middleware exige token.sub)
+        t.isPaid = dbUser.isPaid
+        t.chk = Date.now()
       }
       return token
     },

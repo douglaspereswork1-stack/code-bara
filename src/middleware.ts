@@ -17,8 +17,9 @@ export async function middleware(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(route + '/')
   )
 
-  // Se não tem token e não é rota pública → redireciona pro login
-  if (!token && !isPublicRoute) {
+  // Sem token (ou token esvaziado pelo callback jwt — usuário apagado) e rota não pública → login
+  const logged = Boolean(token?.sub)
+  if (!logged && !isPublicRoute) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
@@ -32,7 +33,7 @@ export async function middleware(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(route + '/')
   )
 
-  if (token && isProtectedRoute) {
+  if (logged && isProtectedRoute) {
     // Verifica isPaid via JWT (colocado no callback do auth)
     const isPaid = (token as unknown as { isPaid?: boolean }).isPaid
 
