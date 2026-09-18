@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { LessonMarkdown } from '@/components/lesson/LessonMarkdown'
+import { LessonMarkdown, parseInteractiveBlocks } from '@/components/lesson/LessonMarkdown'
 import { ArrowLeft, ArrowRight, CheckCircle, Clock, Zap, ExternalLink, BookOpen } from 'lucide-react'
 
 type LessonProps = {
@@ -23,6 +23,11 @@ type LessonProps = {
 export default function LessonClient({ lesson, courseSlug, prevLessonId, nextLessonId, initialCompleted }: LessonProps) {
   const [completed, setCompleted] = useState(initialCompleted)
   const [loading, setLoading] = useState(false)
+
+  const { cleanContent, interactiveBlocks } = useMemo(() => {
+    const { clean, blocks } = parseInteractiveBlocks(lesson.content)
+    return { cleanContent: clean, interactiveBlocks: blocks }
+  }, [lesson.content])
 
   async function toggleComplete() {
     setLoading(true)
@@ -60,18 +65,18 @@ export default function LessonClient({ lesson, courseSlug, prevLessonId, nextLes
       <div
         className="prose prose-invert max-w-none text-[#E2E8F0] leading-relaxed"
       >
-        <LessonMarkdown content={lesson.content} />
+        <LessonMarkdown content={cleanContent} interactiveBlocks={interactiveBlocks} />
       </div>
 
       {/* References section */}
-      {lesson.content.includes('## Referências') && (
+      {cleanContent.includes('## Referências') && (
         <div className="rounded-xl border border-[#22D3EE]/20 bg-[#22D3EE]/[0.03] p-5">
           <div className="flex items-center gap-2 mb-3">
             <BookOpen className="w-4 h-4 text-[#22D3EE]" />
             <h3 className="text-sm font-bold text-[#22D3EE]">Referências</h3>
           </div>
           <div className="space-y-2">
-            {extractReferences(lesson.content).map((ref, i) => (
+            {extractReferences(cleanContent).map((ref, i) => (
               <a
                 key={i}
                 href={ref.url || '#'}

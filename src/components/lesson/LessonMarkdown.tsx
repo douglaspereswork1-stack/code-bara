@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { Lightbulb, AlertTriangle, Rocket, BookOpenCheck, Info, Copy, Check } from 'lucide-react'
+import { InteractiveConsole } from '@/components/lesson/InteractiveConsole'
 import 'highlight.js/styles/github-dark-dimmed.css'
 
 // Callouts: blockquote que começa com um marcador vira caixa colorida.
@@ -56,7 +57,24 @@ function CodeBlock({ children, className }: { children?: ReactNode; className?: 
   )
 }
 
-export function LessonMarkdown({ content }: { content: string }) {
+export type InteractiveBlock = { id: string; code: string; language: string }
+
+const INTERACTIVE_RE = /^:::interactive(?:\s+(\w+))?\s*\n```(\w*)\n([\s\S]*?)```\s*$/gm
+
+export function parseInteractiveBlocks(content: string): { clean: string; blocks: InteractiveBlock[] } {
+  const blocks: InteractiveBlock[] = []
+  let counter = 0
+  const clean = content.replace(INTERACTIVE_RE, (_match, lang: string, fenceLang: string, code: string) => {
+    const id = `__interactive_${counter++}`
+    blocks.push({ id, code: code.trimEnd(), language: lang || fenceLang || 'javascript' })
+    return `:::${id}`
+  })
+  return { clean, blocks }
+}
+
+export function LessonMarkdown({ content, interactiveBlocks = [] }: { content: string; interactiveBlocks?: InteractiveBlock[] }) {
+  const blockMap = new Map(interactiveBlocks.map((b) => [b.id, b]))
+
   return (
     <div className="lesson-md text-[#CBD5E1] leading-relaxed">
       <ReactMarkdown
@@ -66,7 +84,15 @@ export function LessonMarkdown({ content }: { content: string }) {
           h1: ({ children }) => <h1 className="text-2xl font-black text-white mb-4">{children}</h1>,
           h2: ({ children }) => <h2 className="text-xl font-bold text-white mt-8 mb-3">{children}</h2>,
           h3: ({ children }) => <h3 className="text-lg font-semibold text-white mt-6 mb-2">{children}</h3>,
-          p: ({ children }) => <p className="my-3">{children}</p>,
+          p: ({ children }) => {
+            const text = firstText(children).trim()
+            const match = text.match(/^:::(interactive_\d+)$/)
+            if (match && blockMap.has(match[1])) {
+              const block = blockMap.get(match[1])!
+              return <InteractiveConsole code={block.code} language={block.language} />
+            }
+            return <p className="my-3">{children}</p>
+          },
           a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#22D3EE] hover:underline">{children}</a>,
           ul: ({ children }) => <ul className="my-3 ml-5 list-disc space-y-1 marker:text-[#22D3EE]">{children}</ul>,
           ol: ({ children }) => <ol className="my-3 ml-5 list-decimal space-y-1 marker:text-[#22D3EE]">{children}</ol>,
