@@ -76,6 +76,12 @@ export default function LoginPage() {
           </div>
         </div>
 
+        <div className="text-right">
+          <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+            Esqueci minha senha
+          </Link>
+        </div>
+
         {error && (
           <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg">
             {error}
