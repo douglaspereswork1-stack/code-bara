@@ -121,6 +121,8 @@ export default function LessonClient({ lesson, exercises, courseSlug, prevLesson
                   code={exercise.starterCode}
                   language="javascript"
                   expected={exercise.expected}
+                  exerciseId={exercise.id}
+                  xpReward={exercise.xpReward}
                 />
               </div>
             </div>

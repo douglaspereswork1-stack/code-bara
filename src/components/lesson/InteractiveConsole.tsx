@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo, useRef } from 'react'
 import Editor from '@monaco-editor/react'
-import { Play, RotateCcw, Terminal, AlertCircle, CheckCircle2, Lightbulb, ChevronRight, X, Loader2, TextCursorInput } from 'lucide-react'
+import { Play, RotateCcw, Terminal, AlertCircle, CheckCircle2, Lightbulb, ChevronRight, X, Loader2, TextCursorInput, Zap } from 'lucide-react'
 
 type OutputLine = { type: 'log' | 'error' | 'warn' | 'info'; text: string }
 type InputRequest = { message: string; resolve: (value: string) => void } | null
@@ -12,6 +12,8 @@ type Props = {
   language?: string
   hints?: string[]
   expected?: string[]
+  exerciseId?: string
+  xpReward?: number
 }
 
 // Pyodide instance cache (shared across components, loaded from CDN)
@@ -116,7 +118,7 @@ function normalize(text: string): string {
   return text.trim().replace(/\r\n/g, '\n').replace(/\s+$/gm, '')
 }
 
-export function InteractiveConsole({ code: initialCode, language = 'javascript', hints = [], expected = [] }: Props) {
+export function InteractiveConsole({ code: initialCode, language = 'javascript', hints = [], expected = [], exerciseId, xpReward }: Props) {
   const [code, setCode] = useState(initialCode.trim())
   const [output, setOutput] = useState<OutputLine[]>([])
   const [running, setRunning] = useState(false)
@@ -127,6 +129,7 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
   const [expectedOutput, setExpectedOutput] = useState<string[]>([])
   const [inputRequest, setInputRequest] = useState<InputRequest>(null)
   const [inputValue, setInputValue] = useState('')
+  const [xpAwarded, setXpAwarded] = useState<{ xp: number; total: number } | null>(null)
   const pyodideRef = useRef<unknown>(null)
 
   const isPython = language === 'python'
@@ -264,11 +267,24 @@ builtins.input = _async_input
         expectedLines.every((e, i) => e === actualLines[i])
       setValidation(match ? 'pass' : 'fail')
       if (!match) setExpectedOutput(expected)
+      if (match && exerciseId && xpReward) {
+        try {
+          const res = await fetch('/api/progress/exercise', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ exerciseId, xpReward }),
+          })
+          const data = await res.json()
+          if (data.ok && !data.alreadyAwarded) {
+            setXpAwarded({ xp: data.xpEarned, total: data.total })
+          }
+        } catch { /* ignore */ }
+      }
     }
 
     setOutput(lines)
     setRunning(false)
-  }, [code, hints, expected, isPython, runJavaScript, runPython])
+  }, [code, hints, expected, isPython, runJavaScript, runPython, exerciseId, xpReward])
 
   const hasOutput = output.length > 0
   const hasError = output.some((l) => l.type === 'error')
@@ -442,6 +458,13 @@ builtins.input = _async_input
       {validation === null && hasLog && !hasError && expected.length === 0 && (
         <div className="px-4 py-2 bg-[#10B981]/[0.06] border-t border-[#10B981]/20 text-[13px] text-[#10B981] font-medium flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" /> Código executado com sucesso!
+        </div>
+      )}
+
+      {/* XP awarded */}
+      {xpAwarded && (
+        <div className="px-4 py-2 bg-[#FACC15]/[0.08] border-t border-[#FACC15]/20 text-[13px] text-[#FACC15] font-bold flex items-center gap-2">
+          <Zap className="w-4 h-4" /> +{xpAwarded.xp} XP ganho! Total: {xpAwarded.total} XP
         </div>
       )}
     </div>
