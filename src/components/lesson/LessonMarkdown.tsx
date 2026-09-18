@@ -57,16 +57,21 @@ function CodeBlock({ children, className }: { children?: ReactNode; className?: 
   )
 }
 
-export type InteractiveBlock = { id: string; code: string; language: string }
+export type InteractiveBlock = { id: string; code: string; language: string; hints: string[] }
 
-const INTERACTIVE_RE = /^:::interactive(?:\s+(\w+))?\s*\n```(\w*)\n([\s\S]*?)```\s*$/gm
+const INTERACTIVE_RE = /^:::interactive(?:\s+(\w+))?\s*\n((?:^:::hint\s+.*\n)*)```(\w*)\n([\s\S]*?)```\s*$/gm
 
 export function parseInteractiveBlocks(content: string): { clean: string; blocks: InteractiveBlock[] } {
   const blocks: InteractiveBlock[] = []
   let counter = 0
-  const clean = content.replace(INTERACTIVE_RE, (_match, lang: string, fenceLang: string, code: string) => {
+  const clean = content.replace(INTERACTIVE_RE, (_match, lang: string, hintBlock: string, fenceLang: string, code: string) => {
     const id = `__interactive_${counter++}`
-    blocks.push({ id, code: code.trimEnd(), language: lang || fenceLang || 'javascript' })
+    const hints = hintBlock
+      .split('\n')
+      .filter((line: string) => line.startsWith(':::hint'))
+      .map((line: string) => line.replace(/^:::hint\s*/, '').trim())
+      .filter(Boolean)
+    blocks.push({ id, code: code.trimEnd(), language: lang || fenceLang || 'javascript', hints })
     return `:::${id}`
   })
   return { clean, blocks }
@@ -89,7 +94,7 @@ export function LessonMarkdown({ content, interactiveBlocks = [] }: { content: s
             const match = text.match(/^:::(interactive_\d+)$/)
             if (match && blockMap.has(match[1])) {
               const block = blockMap.get(match[1])!
-              return <InteractiveConsole code={block.code} language={block.language} />
+              return <InteractiveConsole code={block.code} language={block.language} hints={block.hints} />
             }
             return <p className="my-3">{children}</p>
           },
