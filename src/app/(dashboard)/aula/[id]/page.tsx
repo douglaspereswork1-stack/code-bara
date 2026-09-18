@@ -13,6 +13,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
   const lesson = await prisma.lesson.findUnique({
     where: { id },
     include: {
+      exercises: { orderBy: { order: 'asc' } },
       module: {
         include: {
           course: {
@@ -61,6 +62,15 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
         durationMin: lesson.durationMin,
         xpReward: lesson.xpReward,
       }}
+      exercises={lesson.exercises.map((e) => ({
+        id: e.id,
+        title: e.title,
+        description: e.description,
+        starterCode: e.starterCode,
+        solution: e.solution,
+        testCases: e.testCases,
+        xpReward: e.xpReward,
+      }))}
       courseSlug={lesson.module.course.slug}
       prevLessonId={prevLesson?.id ?? null}
       nextLessonId={nextLesson?.id ?? null}

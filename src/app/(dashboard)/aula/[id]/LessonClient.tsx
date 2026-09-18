@@ -3,7 +3,18 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { LessonMarkdown, parseInteractiveBlocks } from '@/components/lesson/LessonMarkdown'
-import { ArrowLeft, ArrowRight, CheckCircle, Clock, Zap, ExternalLink, BookOpen } from 'lucide-react'
+import { InteractiveConsole } from '@/components/lesson/InteractiveConsole'
+import { ArrowLeft, ArrowRight, CheckCircle, Clock, Zap, ExternalLink, BookOpen, Dumbbell } from 'lucide-react'
+
+type Exercise = {
+  id: string
+  title: string
+  description: string
+  starterCode: string
+  solution: string
+  testCases: string
+  xpReward: number
+}
 
 type LessonProps = {
   lesson: {
@@ -14,13 +25,14 @@ type LessonProps = {
     durationMin: number
     xpReward: number
   }
+  exercises: Exercise[]
   courseSlug: string
   prevLessonId: string | null
   nextLessonId: string | null
   initialCompleted: boolean
 }
 
-export default function LessonClient({ lesson, courseSlug, prevLessonId, nextLessonId, initialCompleted }: LessonProps) {
+export default function LessonClient({ lesson, exercises, courseSlug, prevLessonId, nextLessonId, initialCompleted }: LessonProps) {
   const [completed, setCompleted] = useState(initialCompleted)
   const [loading, setLoading] = useState(false)
 
@@ -28,6 +40,19 @@ export default function LessonClient({ lesson, courseSlug, prevLessonId, nextLes
     const { clean, blocks } = parseInteractiveBlocks(lesson.content)
     return { cleanContent: clean, interactiveBlocks: blocks }
   }, [lesson.content])
+
+  const parsedExercises = useMemo(() => {
+    return exercises.map((e) => {
+      let expected: string[] = []
+      try {
+        const parsed = JSON.parse(e.testCases)
+        expected = Array.isArray(parsed) ? parsed : [String(parsed)]
+      } catch {
+        if (e.testCases.trim()) expected = [e.testCases.trim()]
+      }
+      return { ...e, expected }
+    })
+  }, [exercises])
 
   async function toggleComplete() {
     setLoading(true)
@@ -62,11 +87,46 @@ export default function LessonClient({ lesson, courseSlug, prevLessonId, nextLes
       </div>
 
       {/* Content */}
-      <div
-        className="prose prose-invert max-w-none text-[#E2E8F0] leading-relaxed"
-      >
+      <div className="prose prose-invert max-w-none text-[#E2E8F0] leading-relaxed">
         <LessonMarkdown content={cleanContent} interactiveBlocks={interactiveBlocks} />
       </div>
+
+      {/* Database exercises */}
+      {parsedExercises.length > 0 && (
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 text-[#8B5CF6]">
+            <Dumbbell className="w-5 h-5" />
+            <h2 className="text-lg font-bold">Exercícios Práticos</h2>
+          </div>
+          {parsedExercises.map((exercise, i) => (
+            <div key={exercise.id} className="rounded-xl border border-[#8B5CF6]/20 bg-[#0D1528] overflow-hidden">
+              <div className="px-5 py-3 border-b border-white/[0.06] bg-[#8B5CF6]/[0.04]">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-[#8B5CF6]">
+                      Exercício {i + 1}
+                    </span>
+                    <h3 className="text-sm font-bold text-white mt-0.5">{exercise.title}</h3>
+                  </div>
+                  <span className="flex items-center gap-1 text-xs text-[#FACC15]">
+                    <Zap className="w-3 h-3" /> +{exercise.xpReward} XP
+                  </span>
+                </div>
+                {exercise.description && (
+                  <p className="text-[13px] text-[#94A3B8] mt-1">{exercise.description}</p>
+                )}
+              </div>
+              <div className="p-1">
+                <InteractiveConsole
+                  code={exercise.starterCode}
+                  language="javascript"
+                  expected={exercise.expected}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* References section */}
       {cleanContent.includes('## Referências') && (
