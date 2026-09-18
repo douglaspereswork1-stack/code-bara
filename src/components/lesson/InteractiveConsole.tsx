@@ -2,9 +2,10 @@
 
 import { useState, useCallback, useMemo, useRef } from 'react'
 import Editor from '@monaco-editor/react'
-import { Play, RotateCcw, Terminal, AlertCircle, CheckCircle2, Lightbulb, ChevronRight, X, Loader2 } from 'lucide-react'
+import { Play, RotateCcw, Terminal, AlertCircle, CheckCircle2, Lightbulb, ChevronRight, X, Loader2, TextCursorInput } from 'lucide-react'
 
 type OutputLine = { type: 'log' | 'error' | 'warn' | 'info'; text: string }
+type InputRequest = { message: string; resolve: (value: string) => void } | null
 
 type Props = {
   code: string
@@ -124,6 +125,8 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
   const [autoHints, setAutoHints] = useState<string[]>([])
   const [validation, setValidation] = useState<'pass' | 'fail' | null>(null)
   const [expectedOutput, setExpectedOutput] = useState<string[]>([])
+  const [inputRequest, setInputRequest] = useState<InputRequest>(null)
+  const [inputValue, setInputValue] = useState('')
   const pyodideRef = useRef<unknown>(null)
 
   const isPython = language === 'python'
@@ -132,7 +135,22 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
   const showHintButton = totalHints > 0 || autoHints.length > 0
   const allHints = useMemo(() => [...autoHints, ...hints.filter((h) => !autoHints.includes(h))], [autoHints, hints])
 
-  const runJavaScript = useCallback((codeStr: string) => {
+  const submitInput = useCallback(() => {
+    if (inputRequest) {
+      inputRequest.resolve(inputValue)
+      setInputRequest(null)
+      setInputValue('')
+    }
+  }, [inputRequest, inputValue])
+
+  const requestInput = useCallback((message: string): Promise<string> => {
+    return new Promise((resolve) => {
+      setInputRequest({ message, resolve })
+      setInputValue('')
+    })
+  }, [])
+
+  const runJavaScript = useCallback(async (codeStr: string) => {
     const lines: OutputLine[] = []
     const push = (type: OutputLine['type'], args: unknown[]) => {
       const text = args
@@ -140,6 +158,9 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
         .join(' ')
       lines.push({ type, text })
     }
+
+    const promptFn = (msg?: string) => requestInput(msg || 'Digite algo:')
+    const confirmFn = (msg?: string) => { push('info', [`Confirm: ${msg || ''}`]); return true }
 
     const sandbox = {
       console: {
@@ -149,22 +170,23 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
         info: (...args: unknown[]) => push('info', args),
       },
       alert: (msg: unknown) => push('info', [`Alert: ${msg}`]),
-      prompt: () => '',
-      confirm: () => true,
+      prompt: promptFn,
+      confirm: confirmFn,
     }
 
     let errorMsg = ''
     try {
       const keys = Object.keys(sandbox)
-      const fn = new Function(...keys, codeStr)
-      fn(...Object.values(sandbox))
+      const asyncCode = `(async () => { ${codeStr} })()`
+      const fn = new Function(...keys, `return ${asyncCode}`)
+      await fn(...Object.values(sandbox))
     } catch (err) {
       errorMsg = err instanceof Error ? err.message : String(err)
       push('error', [`❌ ${errorMsg}`])
     }
 
     return { lines, errorMsg }
-  }, [])
+  }, [requestInput])
 
   const runPython = useCallback(async (codeStr: string) => {
     const lines: OutputLine[] = []
@@ -179,10 +201,27 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
         setLoadingPyodide(false)
       }
 
-      const pyodide = pyodideRef.current as { runPythonAsync: (code: string) => Promise<unknown>; setStdout: (fn: (msg: string) => void) => void; setStderr: (fn: (msg: string) => void) => void }
+      const pyodide = pyodideRef.current as { runPythonAsync: (code: string) => Promise<unknown>; setStdout: (fn: (msg: string) => void) => void; setStderr: (fn: (msg: string) => void) => void; registerJsModule: (name: string, obj: Record<string, unknown>) => void }
 
       pyodide.setStdout((msg: string) => push('log', msg.trimEnd()))
       pyodide.setStderr((msg: string) => push('error', msg.trimEnd()))
+
+      // Register Python input() handler via JS interop
+      pyodide.registerJsModule('_browser', {
+        input: async (msg?: string) => {
+          const value = await requestInput(msg || 'Digite algo:')
+          return value
+        },
+      })
+
+      // Override Python input() to use our browser dialog
+      await pyodide.runPythonAsync(`
+import builtins
+async def _async_input(prompt_str=''):
+    import _browser
+    return await _browser.input(str(prompt_str))
+builtins.input = _async_input
+      `)
 
       await pyodide.runPythonAsync(codeStr)
     } catch (err) {
@@ -197,7 +236,7 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
     }
 
     return { lines, errorMsg }
-  }, [])
+  }, [requestInput])
 
   const runCode = useCallback(async () => {
     setRunning(true)
@@ -207,7 +246,7 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
 
     const { lines, errorMsg } = isPython
       ? await runPython(code)
-      : runJavaScript(code)
+      : await runJavaScript(code)
 
     if (lines.length === 0) {
       lines.push({ type: 'info', text: '(nenhum output)' })
@@ -235,8 +274,36 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
   const hasError = output.some((l) => l.type === 'error')
   const hasLog = output.some((l) => l.type === 'log')
 
-  return (
+    return (
     <div className="my-5 rounded-xl border border-[#8B5CF6]/30 bg-[#0A1128] overflow-hidden">
+      {/* Input Dialog */}
+      {inputRequest && (
+        <div className="border-b border-[#8B5CF6]/30 bg-[#8B5CF6]/[0.08] px-4 py-3">
+          <div className="flex items-center gap-2 mb-2">
+            <TextCursorInput className="w-4 h-4 text-[#8B5CF6]" />
+            <span className="text-[13px] text-[#C4B5FD] font-medium">{inputRequest.message}</span>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') submitInput() }}
+              className="flex-1 px-3 py-1.5 rounded-lg bg-[#0A1128] border border-[#8B5CF6]/30 text-white text-[13px] font-mono placeholder:text-[#64748B] focus:outline-none focus:ring-1 focus:ring-[#8B5CF6]"
+              placeholder="Digite sua resposta..."
+              autoFocus
+            />
+            <button
+              type="button"
+              onClick={submitInput}
+              className="px-4 py-1.5 rounded-lg bg-[#8B5CF6] text-white text-[13px] font-bold hover:brightness-110 transition"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.06] bg-[#8B5CF6]/[0.06]">
         <div className="flex items-center gap-2">
@@ -264,7 +331,7 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
           )}
           <button
             type="button"
-            onClick={() => { setCode(initialCode.trim()); setOutput([]); setVisibleHints(0); setAutoHints([]); setValidation(null); setExpectedOutput([]) }}
+            onClick={() => { setCode(initialCode.trim()); setOutput([]); setVisibleHints(0); setAutoHints([]); setValidation(null); setExpectedOutput([]); setInputRequest(null) }}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#94A3B8] hover:text-white hover:bg-white/[0.06] transition"
           >
             <RotateCcw className="w-3.5 h-3.5" /> Resetar
@@ -272,7 +339,7 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
           <button
             type="button"
             onClick={runCode}
-            disabled={running || loadingPyodide}
+            disabled={running || loadingPyodide || !!inputRequest}
             className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold bg-[#10B981] text-white hover:brightness-110 transition disabled:opacity-50"
           >
             {loadingPyodide ? (
