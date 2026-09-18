@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { sendResetEmail } from '@/lib/email'
 import crypto from 'crypto'
 
 export async function POST(req: NextRequest) {
@@ -26,8 +27,7 @@ export async function POST(req: NextRequest) {
 
   const resetUrl = `${req.nextUrl.origin}/reset-password?token=${token}`
 
-  // Log no servidor pra debug (em prod, integrar email)
-  console.log(`[forgot-password] Reset link para ${email}: ${resetUrl}`)
+  await sendResetEmail({ to: email, resetUrl })
 
   return NextResponse.json({ ok: true })
 }
