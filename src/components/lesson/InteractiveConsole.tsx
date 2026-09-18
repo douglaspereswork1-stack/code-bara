@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo, useRef } from 'react'
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import Editor from '@monaco-editor/react'
 import { Play, RotateCcw, Terminal, AlertCircle, CheckCircle2, Lightbulb, ChevronRight, X, Loader2, TextCursorInput, Zap } from 'lucide-react'
 
@@ -14,6 +14,17 @@ type Props = {
   expected?: string[]
   exerciseId?: string
   xpReward?: number
+}
+
+function useIsMobile(breakpoint = 640) {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < breakpoint)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [breakpoint])
+  return isMobile
 }
 
 // Pyodide instance cache (shared across components, loaded from CDN)
@@ -133,6 +144,7 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
   const pyodideRef = useRef<unknown>(null)
 
   const isPython = language === 'python'
+  const isMobile = useIsMobile()
 
   const totalHints = hints.length
   const showHintButton = totalHints > 0 || autoHints.length > 0
@@ -389,26 +401,40 @@ builtins.input = _async_input
       )}
 
       {/* Editor */}
-      <div className="h-[200px] border-b border-white/[0.06]">
-        <Editor
-          language={isPython ? 'python' : language}
-          value={code}
-          onChange={(v) => setCode(v ?? '')}
-          theme="vs-dark"
-          options={{
-            fontSize: 13,
-            minimap: { enabled: false },
-            scrollBeyondLastLine: false,
-            padding: { top: 12, bottom: 12 },
-            lineNumbers: 'on',
-            tabSize: isPython ? 4 : 2,
-            wordWrap: 'on',
-            overviewRulerLanes: 0,
-            hideCursorInOverviewRuler: true,
-            renderLineHighlight: 'none',
-            scrollbar: { vertical: 'hidden', horizontal: 'auto' },
-          }}
-        />
+      <div className="border-b border-white/[0.06]">
+        {isMobile ? (
+          <textarea
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            className="w-full h-[200px] p-4 bg-[#1E1E1E] text-[#D4D4D4] font-mono text-[13px] leading-relaxed resize-none focus:outline-none placeholder:text-[#64748B]"
+            placeholder={isPython ? '# Escreva seu código Python aqui...' : '// Escreva seu código JavaScript aqui...'}
+            spellCheck={false}
+            autoCapitalize="off"
+            autoCorrect="off"
+          />
+        ) : (
+          <div className="h-[200px]">
+            <Editor
+              language={isPython ? 'python' : language}
+              value={code}
+              onChange={(v) => setCode(v ?? '')}
+              theme="vs-dark"
+              options={{
+                fontSize: 13,
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                padding: { top: 12, bottom: 12 },
+                lineNumbers: 'on',
+                tabSize: isPython ? 4 : 2,
+                wordWrap: 'on',
+                overviewRulerLanes: 0,
+                hideCursorInOverviewRuler: true,
+                renderLineHighlight: 'none',
+                scrollbar: { vertical: 'hidden', horizontal: 'auto' },
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Output */}
