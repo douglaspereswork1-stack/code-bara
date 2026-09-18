@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import Editor from '@monaco-editor/react'
-import { Play, RotateCcw, Terminal, AlertCircle, CheckCircle2, Lightbulb, ChevronRight } from 'lucide-react'
+import { Play, RotateCcw, Terminal, AlertCircle, CheckCircle2, Lightbulb, ChevronRight, X } from 'lucide-react'
 
 type OutputLine = { type: 'log' | 'error' | 'warn' | 'info'; text: string }
 
@@ -10,6 +10,7 @@ type Props = {
   code: string
   language?: string
   hints?: string[]
+  expected?: string[]
 }
 
 function detectHints(code: string, errorText: string, hints: string[]): string[] {
@@ -43,12 +44,18 @@ function detectHints(code: string, errorText: string, hints: string[]): string[]
   return [...suggestions, ...customSuggestions]
 }
 
-export function InteractiveConsole({ code: initialCode, language = 'javascript', hints = [] }: Props) {
+function normalize(text: string): string {
+  return text.trim().replace(/\r\n/g, '\n').replace(/\s+$/gm, '')
+}
+
+export function InteractiveConsole({ code: initialCode, language = 'javascript', hints = [], expected = [] }: Props) {
   const [code, setCode] = useState(initialCode.trim())
   const [output, setOutput] = useState<OutputLine[]>([])
   const [running, setRunning] = useState(false)
   const [visibleHints, setVisibleHints] = useState(0)
   const [autoHints, setAutoHints] = useState<string[]>([])
+  const [validation, setValidation] = useState<'pass' | 'fail' | null>(null)
+  const [expectedOutput, setExpectedOutput] = useState<string[]>([])
 
   const totalHints = hints.length
   const showHintButton = totalHints > 0 || autoHints.length > 0
@@ -57,6 +64,8 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
   const runCode = useCallback(() => {
     setRunning(true)
     setOutput([])
+    setValidation(null)
+    setExpectedOutput([])
 
     const lines: OutputLine[] = []
     const push = (type: OutputLine['type'], args: unknown[]) => {
@@ -97,9 +106,18 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
       if (detected.length > 0) setAutoHints(detected)
     }
 
+    if (expected.length > 0) {
+      const actualLines = lines.filter((l) => l.type === 'log').map((l) => normalize(l.text))
+      const expectedLines = expected.map(normalize)
+      const match = expectedLines.length === actualLines.length &&
+        expectedLines.every((e, i) => e === actualLines[i])
+      setValidation(match ? 'pass' : 'fail')
+      if (!match) setExpectedOutput(expected)
+    }
+
     setOutput(lines)
     setRunning(false)
-  }, [code, hints])
+  }, [code, hints, expected])
 
   const hasOutput = output.length > 0
   const hasError = output.some((l) => l.type === 'error')
@@ -129,7 +147,7 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
           )}
           <button
             type="button"
-            onClick={() => { setCode(initialCode.trim()); setOutput([]); setVisibleHints(0); setAutoHints([]) }}
+            onClick={() => { setCode(initialCode.trim()); setOutput([]); setVisibleHints(0); setAutoHints([]); setValidation(null); setExpectedOutput([]) }}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#94A3B8] hover:text-white hover:bg-white/[0.06] transition"
           >
             <RotateCcw className="w-3.5 h-3.5" /> Resetar
@@ -213,8 +231,27 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
         </div>
       )}
 
-      {/* Success feedback */}
-      {hasLog && !hasError && (
+      {/* Validation feedback */}
+      {validation === 'pass' && (
+        <div className="px-4 py-2.5 bg-[#10B981]/[0.08] border-t border-[#10B981]/20 text-[13px] text-[#10B981] font-bold flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4" /> Correto! Seu código produziu a saída esperada.
+        </div>
+      )}
+      {validation === 'fail' && (
+        <div className="px-4 py-2.5 bg-[#F87171]/[0.08] border-t border-[#F87171]/20 text-[13px] text-[#F87171]">
+          <div className="font-bold flex items-center gap-2 mb-1.5">
+            <X className="w-4 h-4" /> Saída incorreta
+          </div>
+          <div className="font-mono text-[12px] opacity-80">
+            Esperado: {expectedOutput.map((e, i) => (
+              <span key={i} className="block pl-2">&gt; {e}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Generic success (no expected output defined) */}
+      {validation === null && hasLog && !hasError && expected.length === 0 && (
         <div className="px-4 py-2 bg-[#10B981]/[0.06] border-t border-[#10B981]/20 text-[13px] text-[#10B981] font-medium flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" /> Código executado com sucesso!
         </div>
