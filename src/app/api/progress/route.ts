@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { touchStreak } from '@/lib/streak'
 import { canAccessModule } from '@/lib/access'
 
 export async function POST(req: NextRequest) {
@@ -63,13 +64,7 @@ export async function POST(req: NextRequest) {
         update: { total: { increment: lesson.xpReward } },
         create: { userId, total: lesson.xpReward },
       })
-
-      // Update streak
-      await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/streak`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      })
+      await touchStreak(userId)
     }
   }
 

@@ -92,7 +92,7 @@ export function LessonMarkdown({ content, interactiveBlocks = [] }: { content: s
           h3: ({ children }) => <h3 className="text-lg font-semibold text-white mt-6 mb-2">{children}</h3>,
           p: ({ children }) => {
             const text = firstText(children).trim()
-            const match = text.match(/^:::(interactive_\d+)$/)
+            const match = text.match(/^:::(__interactive_\d+)$/)
             if (match && blockMap.has(match[1])) {
               const block = blockMap.get(match[1])!
               return <InteractiveConsole code={block.code} language={block.language} hints={block.hints} expected={block.expected} />

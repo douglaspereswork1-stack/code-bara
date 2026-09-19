@@ -1,0 +1,65 @@
+[
+  {
+    "lessonTitle": "Variáveis e Tipos",
+    "title": "Apresentação",
+    "description": "Crie uma constante `nome` com o valor \"Zen\" e uma `idade` com 3. Imprima exatamente: Zen tem 3 anos",
+    "starterCode": "const nome = \"\"\nconst idade = 0\n\nconsole.log()\n",
+    "solution": "const nome = \"Zen\"\nconst idade = 3\nconsole.log(`${nome} tem ${idade} anos`)",
+    "testCases": ["Zen tem 3 anos"],
+    "xpReward": 15
+  },
+  {
+    "lessonTitle": "Condicionais e Loops",
+    "title": "Par ou ímpar",
+    "description": "Para cada número de 1 a 5, imprima \"N é par\" ou \"N é ímpar\".",
+    "starterCode": "for (let n = 1; n <= 5; n++) {\n  // seu código aqui\n}\n",
+    "solution": "for (let n = 1; n <= 5; n++) {\n  console.log(n % 2 === 0 ? `${n} é par` : `${n} é ímpar`)\n}",
+    "testCases": ["1 é ímpar", "2 é par", "3 é ímpar", "4 é par", "5 é ímpar"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Condicionais e Loops",
+    "title": "FizzBuzz até 15",
+    "description": "De 1 a 15: múltiplos de 3 imprimem Fizz, de 5 imprimem Buzz, de ambos FizzBuzz, os demais o próprio número.",
+    "starterCode": "for (let i = 1; i <= 15; i++) {\n  \n}\n",
+    "solution": "for (let i = 1; i <= 15; i++) {\n  if (i % 15 === 0) console.log('FizzBuzz')\n  else if (i % 3 === 0) console.log('Fizz')\n  else if (i % 5 === 0) console.log('Buzz')\n  else console.log(i)\n}",
+    "testCases": ["1", "2", "Fizz", "4", "Buzz", "Fizz", "7", "8", "Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz"],
+    "xpReward": 30
+  },
+  {
+    "lessonTitle": "Funções e Escopo",
+    "title": "Função dobro",
+    "description": "Escreva `dobro(n)` que retorna o dobro. Depois imprima dobro(4) e dobro(21).",
+    "starterCode": "function dobro(n) {\n  \n}\n\nconsole.log(dobro(4))\nconsole.log(dobro(21))\n",
+    "solution": "function dobro(n) {\n  return n * 2\n}\nconsole.log(dobro(4))\nconsole.log(dobro(21))",
+    "testCases": ["8", "42"],
+    "xpReward": 15
+  },
+  {
+    "lessonTitle": "Exercícios Práticos",
+    "title": "Soma de array",
+    "description": "Some todos os números do array e imprima o total.",
+    "starterCode": "const numeros = [3, 5, 7]\nlet total = 0\n\nconsole.log(total)\n",
+    "solution": "const numeros = [3, 5, 7]\nlet total = 0\nfor (const n of numeros) total += n\nconsole.log(total)",
+    "testCases": ["15"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Exercícios Práticos",
+    "title": "Inverter texto",
+    "description": "Imprima a palavra \"capivara\" de trás pra frente.",
+    "starterCode": "const palavra = \"capivara\"\n\nconsole.log()\n",
+    "solution": "const palavra = \"capivara\"\nconsole.log(palavra.split('').reverse().join(''))",
+    "testCases": ["aravipac"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Exercícios Práticos",
+    "title": "Contar vogais",
+    "description": "Conte quantas vogais tem em \"capivara\" e imprima o número.",
+    "starterCode": "const texto = \"capivara\"\nlet vogais = 0\n\nconsole.log(vogais)\n",
+    "solution": "const texto = \"capivara\"\nlet vogais = 0\nfor (const c of texto) if ('aeiou'.includes(c)) vogais++\nconsole.log(vogais)",
+    "testCases": ["4"],
+    "xpReward": 25
+  }
+]

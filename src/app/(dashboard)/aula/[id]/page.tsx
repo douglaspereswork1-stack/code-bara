@@ -67,9 +67,10 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
         title: e.title,
         description: e.description,
         starterCode: e.starterCode,
-        solution: e.solution,
-        testCases: e.testCases,
         xpReward: e.xpReward,
+        // gabarito (solution/testCases) NÃO vai pro client — validação é em /api/progress/exercise
+        // ponytail: linguagem pelo slug do módulo; coluna Exercise.language quando um módulo misturar
+        language: lesson.module.slug === 'python' ? 'python' : 'javascript',
       }))}
       courseSlug={lesson.module.course.slug}
       prevLessonId={prevLesson?.id ?? null}

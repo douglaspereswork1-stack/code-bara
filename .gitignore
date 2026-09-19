@@ -50,5 +50,6 @@ prisma/seed-*.ts
 !prisma/seed.ts
 !prisma/seed-quizzes.ts
 !prisma/seed-content.ts
+!prisma/seed-exercicios.ts
 
 .vercel

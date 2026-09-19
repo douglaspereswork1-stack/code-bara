@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import Editor from '@monaco-editor/react'
+import { outputMatches } from '@/lib/exercise'
 import { Play, RotateCcw, Terminal, AlertCircle, CheckCircle2, Lightbulb, ChevronRight, X, Loader2, TextCursorInput, Zap } from 'lucide-react'
 
 type OutputLine = { type: 'log' | 'error' | 'warn' | 'info'; text: string }
@@ -13,8 +14,11 @@ type Props = {
   hints?: string[]
   expected?: string[]
   exerciseId?: string
-  xpReward?: number
 }
+
+// ponytail: timeouts fixos; Pyodide precisa de folga porque o 1º run inclui o load do CDN
+const JS_TIMEOUT_MS = 3000
+const PY_TIMEOUT_MS = 15000
 
 function useIsMobile(breakpoint = 640) {
   const [isMobile, setIsMobile] = useState(false)
@@ -25,48 +29,6 @@ function useIsMobile(breakpoint = 640) {
     return () => window.removeEventListener('resize', check)
   }, [breakpoint])
   return isMobile
-}
-
-// Pyodide instance cache (shared across components, loaded from CDN)
-const PYODIDE_CDN = 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/'
-let pyodideInstance: unknown = null
-let pyodidePromise: Promise<unknown> | null = null
-
-async function getPyodide() {
-  if (pyodideInstance) return pyodideInstance
-  if (pyodidePromise) return pyodidePromise
-
-  pyodidePromise = (async () => {
-    // Load Pyodide from CDN
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pyodide = await (window as any).loadPyodide({
-      indexURL: PYODIDE_CDN,
-    })
-    pyodideInstance = pyodide
-    return pyodide
-  })()
-
-  return pyodidePromise
-}
-
-// Inject loadPyodide script tag if not already present
-function ensurePyodideScript(): Promise<void> {
-  return new Promise((resolve) => {
-    if (typeof window !== 'undefined' && 'loadPyodide' in window) {
-      resolve()
-      return
-    }
-    const existing = document.querySelector(`script[src="${PYODIDE_CDN}pyodide.js"]`)
-    if (existing) {
-      existing.addEventListener('load', () => resolve())
-      return
-    }
-    const script = document.createElement('script')
-    script.src = `${PYODIDE_CDN}pyodide.js`
-    script.async = true
-    script.onload = () => resolve()
-    document.head.appendChild(script)
-  })
 }
 
 function detectHints(code: string, errorText: string, hints: string[], language: string): string[] {
@@ -125,15 +87,11 @@ function detectHints(code: string, errorText: string, hints: string[], language:
   return [...suggestions, ...customSuggestions]
 }
 
-function normalize(text: string): string {
-  return text.trim().replace(/\r\n/g, '\n').replace(/\s+$/gm, '')
-}
-
-export function InteractiveConsole({ code: initialCode, language = 'javascript', hints = [], expected = [], exerciseId, xpReward }: Props) {
+export function InteractiveConsole({ code: initialCode, language = 'javascript', hints = [], expected = [], exerciseId }: Props) {
   const [code, setCode] = useState(initialCode.trim())
   const [output, setOutput] = useState<OutputLine[]>([])
   const [running, setRunning] = useState(false)
-  const [loadingPyodide, setLoadingPyodide] = useState(false)
+  const [status, setStatus] = useState('')
   const [visibleHints, setVisibleHints] = useState(0)
   const [autoHints, setAutoHints] = useState<string[]>([])
   const [validation, setValidation] = useState<'pass' | 'fail' | null>(null)
@@ -141,14 +99,17 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
   const [inputRequest, setInputRequest] = useState<InputRequest>(null)
   const [inputValue, setInputValue] = useState('')
   const [xpAwarded, setXpAwarded] = useState<{ xp: number; total: number } | null>(null)
-  const pyodideRef = useRef<unknown>(null)
+  const workerRef = useRef<Worker | null>(null)
 
   const isPython = language === 'python'
   const isMobile = useIsMobile()
+  const timeoutMs = isPython ? PY_TIMEOUT_MS : JS_TIMEOUT_MS
 
   const totalHints = hints.length
   const showHintButton = totalHints > 0 || autoHints.length > 0
   const allHints = useMemo(() => [...autoHints, ...hints.filter((h) => !autoHints.includes(h))], [autoHints, hints])
+
+  useEffect(() => () => workerRef.current?.terminate(), [])
 
   const submitInput = useCallback(() => {
     if (inputRequest) {
@@ -158,145 +119,88 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
     }
   }, [inputRequest, inputValue])
 
-  const requestInput = useCallback((message: string): Promise<string> => {
-    return new Promise((resolve) => {
-      setInputRequest({ message, resolve })
-      setInputValue('')
-    })
-  }, [])
-
-  const runJavaScript = useCallback(async (codeStr: string) => {
+  // Executa no worker (public/runner-worker.js). Timeout mata o worker — o Pyodide carregado vai junto,
+  // então Python recarrega (~3s) na próxima execução. Timer pausa enquanto espera input do aluno.
+  const runInWorker = useCallback((codeStr: string) => new Promise<{ lines: OutputLine[]; errorMsg: string }>((resolve) => {
     const lines: OutputLine[] = []
-    const push = (type: OutputLine['type'], args: unknown[]) => {
-      const text = args
-        .map((a) => (typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)))
-        .join(' ')
-      lines.push({ type, text })
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const worker = workerRef.current ?? (workerRef.current = new Worker('/runner-worker.js'))
+
+    const finish = (errorMsg: string) => {
+      clearTimeout(timer)
+      worker.onmessage = null
+      setStatus('')
+      resolve({ lines, errorMsg })
+    }
+    const arm = () => {
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        worker.terminate()
+        workerRef.current = null
+        lines.push({ type: 'error', text: `⏱ Tempo limite (${timeoutMs / 1000}s) — loop infinito?` })
+        finish('timeout')
+      }, timeoutMs)
     }
 
-    const promptFn = (msg?: string) => requestInput(msg || 'Digite algo:')
-    const confirmFn = (msg?: string) => { push('info', [`Confirm: ${msg || ''}`]); return true }
-
-    const sandbox = {
-      console: {
-        log: (...args: unknown[]) => push('log', args),
-        error: (...args: unknown[]) => push('error', args),
-        warn: (...args: unknown[]) => push('warn', args),
-        info: (...args: unknown[]) => push('info', args),
-      },
-      alert: (msg: unknown) => push('info', [`Alert: ${msg}`]),
-      prompt: promptFn,
-      confirm: confirmFn,
-    }
-
-    let errorMsg = ''
-    try {
-      const keys = Object.keys(sandbox)
-      const asyncCode = `(async () => { ${codeStr} })()`
-      const fn = new Function(...keys, `return ${asyncCode}`)
-      await fn(...Object.values(sandbox))
-    } catch (err) {
-      errorMsg = err instanceof Error ? err.message : String(err)
-      push('error', [`❌ ${errorMsg}`])
-    }
-
-    return { lines, errorMsg }
-  }, [requestInput])
-
-  const runPython = useCallback(async (codeStr: string) => {
-    const lines: OutputLine[] = []
-    const push = (type: OutputLine['type'], text: string) => lines.push({ type, text })
-
-    let errorMsg = ''
-    try {
-      if (!pyodideRef.current) {
-        setLoadingPyodide(true)
-        await ensurePyodideScript()
-        pyodideRef.current = await getPyodide()
-        setLoadingPyodide(false)
+    worker.onmessage = (e: MessageEvent) => {
+      const msg = e.data
+      if (msg.type === 'line') lines.push(msg.line)
+      else if (msg.type === 'status') { setStatus(msg.text); if (msg.text) clearTimeout(timer); else arm() }
+      else if (msg.type === 'input') {
+        clearTimeout(timer)
+        setInputValue('')
+        setInputRequest({ message: msg.message, resolve: (value) => { worker.postMessage({ type: 'input-reply', value }); arm() } })
       }
-
-      const pyodide = pyodideRef.current as { runPythonAsync: (code: string) => Promise<unknown>; setStdout: (fn: (msg: string) => void) => void; setStderr: (fn: (msg: string) => void) => void; registerJsModule: (name: string, obj: Record<string, unknown>) => void }
-
-      pyodide.setStdout((msg: string) => push('log', msg.trimEnd()))
-      pyodide.setStderr((msg: string) => push('error', msg.trimEnd()))
-
-      // Register Python input() handler via JS interop
-      pyodide.registerJsModule('_browser', {
-        input: async (msg?: string) => {
-          const value = await requestInput(msg || 'Digite algo:')
-          return value
-        },
-      })
-
-      // Override Python input() to use our browser dialog
-      await pyodide.runPythonAsync(`
-import builtins
-async def _async_input(prompt_str=''):
-    import _browser
-    return await _browser.input(str(prompt_str))
-builtins.input = _async_input
-      `)
-
-      await pyodide.runPythonAsync(codeStr)
-    } catch (err) {
-      errorMsg = err instanceof Error ? err.message : String(err)
-      // Clean up Python traceback noise
-      const clean = errorMsg
-        .replace(/File "<exec>",\s*\d+,?\s*/g, '')
-        .replace(/Traceback \(most recent call last\):\s*/g, '')
-        .replace(/^  File\s+/gm, '  → ')
-        .trim()
-      push('error', `❌ ${clean || errorMsg}`)
+      else if (msg.type === 'done') finish(msg.error)
     }
-
-    return { lines, errorMsg }
-  }, [requestInput])
+    worker.onerror = (e) => { lines.push({ type: 'error', text: `❌ ${e.message}` }); finish(e.message) }
+    arm()
+    worker.postMessage({ type: 'run', lang: isPython ? 'python' : 'javascript', code: codeStr })
+  }), [isPython, timeoutMs])
 
   const runCode = useCallback(async () => {
     setRunning(true)
     setOutput([])
     setValidation(null)
     setExpectedOutput([])
+    setInputRequest(null)
+    setXpAwarded(null)
 
-    const { lines, errorMsg } = isPython
-      ? await runPython(code)
-      : await runJavaScript(code)
+    const { lines, errorMsg } = await runInWorker(code)
 
-    if (lines.length === 0) {
-      lines.push({ type: 'info', text: '(nenhum output)' })
-    }
+    if (lines.length === 0) lines.push({ type: 'info', text: '(nenhum output)' })
 
     if (errorMsg || lines.every((l) => l.type !== 'log')) {
       const detected = detectHints(code, errorMsg, hints, language)
       if (detected.length > 0) setAutoHints(detected)
     }
 
-    if (expected.length > 0) {
-      const actualLines = lines.filter((l) => l.type === 'log').map((l) => normalize(l.text))
-      const expectedLines = expected.map(normalize)
-      const match = expectedLines.length === actualLines.length &&
-        expectedLines.every((e, i) => e === actualLines[i])
+    const actualLines = lines.filter((l) => l.type === 'log').map((l) => l.text)
+    if (exerciseId) {
+      // Exercício do banco: gabarito e XP ficam no servidor
+      try {
+        const res = await fetch('/api/progress/exercise', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ exerciseId, output: actualLines }),
+        })
+        const data = await res.json()
+        if (data.ok) {
+          setValidation(data.passed ? 'pass' : 'fail')
+          if (!data.passed) setExpectedOutput(data.expected ?? [])
+          if (data.passed && !data.alreadyAwarded) setXpAwarded({ xp: data.xpEarned, total: data.total })
+        }
+      } catch { /* offline: fica sem veredito */ }
+    } else if (expected.length > 0) {
+      // Bloco :::interactive do markdown: só feedback, sem XP
+      const match = outputMatches(expected, actualLines)
       setValidation(match ? 'pass' : 'fail')
       if (!match) setExpectedOutput(expected)
-      if (match && exerciseId && xpReward) {
-        try {
-          const res = await fetch('/api/progress/exercise', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ exerciseId, xpReward }),
-          })
-          const data = await res.json()
-          if (data.ok && !data.alreadyAwarded) {
-            setXpAwarded({ xp: data.xpEarned, total: data.total })
-          }
-        } catch { /* ignore */ }
-      }
     }
 
     setOutput(lines)
     setRunning(false)
-  }, [code, hints, expected, isPython, runJavaScript, runPython, exerciseId, xpReward])
+  }, [code, hints, expected, language, runInWorker, exerciseId])
 
   const hasOutput = output.length > 0
   const hasError = output.some((l) => l.type === 'error')
@@ -359,7 +263,7 @@ builtins.input = _async_input
           )}
           <button
             type="button"
-            onClick={() => { setCode(initialCode.trim()); setOutput([]); setVisibleHints(0); setAutoHints([]); setValidation(null); setExpectedOutput([]); setInputRequest(null) }}
+            onClick={() => { workerRef.current?.terminate(); workerRef.current = null; setRunning(false); setCode(initialCode.trim()); setOutput([]); setVisibleHints(0); setAutoHints([]); setValidation(null); setExpectedOutput([]); setInputRequest(null) }}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#94A3B8] hover:text-white hover:bg-white/[0.06] transition"
           >
             <RotateCcw className="w-3.5 h-3.5" /> Resetar
@@ -367,11 +271,11 @@ builtins.input = _async_input
           <button
             type="button"
             onClick={runCode}
-            disabled={running || loadingPyodide || !!inputRequest}
+            disabled={running || !!inputRequest}
             className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold bg-[#10B981] text-white hover:brightness-110 transition disabled:opacity-50"
           >
-            {loadingPyodide ? (
-              <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Carregando Python...</>
+            {status ? (
+              <><Loader2 className="w-3.5 h-3.5 animate-spin" /> {status}</>
             ) : (
               <><Play className="w-3.5 h-3.5" fill="currentColor" /> {running ? 'Rodando...' : 'Executar'}</>
             )}

@@ -9,6 +9,7 @@
     "lint": "eslint",
     "postinstall": "prisma generate || exit 0",
     "db:seed": "npx tsx prisma/seed.ts",
+    "db:seed-exercicios": "npx tsx prisma/seed-exercicios.ts",
     "db:seed-quizzes": "npx tsx prisma/seed-quizzes-from-json.ts",
     "validate": "node prisma/validate-pre-commit.js",
     "validate:quizzes": "npx tsx prisma/seed-quizzes-from-json.ts"

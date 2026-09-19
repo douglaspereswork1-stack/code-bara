@@ -11,9 +11,8 @@ type Exercise = {
   title: string
   description: string
   starterCode: string
-  solution: string
-  testCases: string
   xpReward: number
+  language: string
 }
 
 type LessonProps = {
@@ -40,19 +39,6 @@ export default function LessonClient({ lesson, exercises, courseSlug, prevLesson
     const { clean, blocks } = parseInteractiveBlocks(lesson.content)
     return { cleanContent: clean, interactiveBlocks: blocks }
   }, [lesson.content])
-
-  const parsedExercises = useMemo(() => {
-    return exercises.map((e) => {
-      let expected: string[] = []
-      try {
-        const parsed = JSON.parse(e.testCases)
-        expected = Array.isArray(parsed) ? parsed : [String(parsed)]
-      } catch {
-        if (e.testCases.trim()) expected = [e.testCases.trim()]
-      }
-      return { ...e, expected }
-    })
-  }, [exercises])
 
   async function toggleComplete() {
     setLoading(true)
@@ -92,13 +78,13 @@ export default function LessonClient({ lesson, exercises, courseSlug, prevLesson
       </div>
 
       {/* Database exercises */}
-      {parsedExercises.length > 0 && (
+      {exercises.length > 0 && (
         <div className="space-y-6">
           <div className="flex items-center gap-2 text-[#8B5CF6]">
             <Dumbbell className="w-5 h-5" />
             <h2 className="text-lg font-bold">Exercícios Práticos</h2>
           </div>
-          {parsedExercises.map((exercise, i) => (
+          {exercises.map((exercise, i) => (
             <div key={exercise.id} className="rounded-xl border border-[#8B5CF6]/20 bg-[#0D1528] overflow-hidden">
               <div className="px-5 py-3 border-b border-white/[0.06] bg-[#8B5CF6]/[0.04]">
                 <div className="flex items-center justify-between">
@@ -119,10 +105,8 @@ export default function LessonClient({ lesson, exercises, courseSlug, prevLesson
               <div className="p-1">
                 <InteractiveConsole
                   code={exercise.starterCode}
-                  language="javascript"
-                  expected={exercise.expected}
+                  language={exercise.language}
                   exerciseId={exercise.id}
-                  xpReward={exercise.xpReward}
                 />
               </div>
             </div>
