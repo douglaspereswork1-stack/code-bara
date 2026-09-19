@@ -61,5 +61,180 @@
     "solution": "const texto = \"capivara\"\nlet vogais = 0\nfor (const c of texto) if ('aeiou'.includes(c)) vogais++\nconsole.log(vogais)",
     "testCases": ["4"],
     "xpReward": 25
+  },
+
+  {
+    "lessonTitle": "Promises e Async/Await",
+    "title": "Promessa que espera",
+    "description": "Complete `esperar(ms)` para retornar uma Promise que resolve depois de `ms` milissegundos (use setTimeout). O código abaixo deve imprimir \"pronto\" só depois da espera.",
+    "starterCode": "function esperar(ms) {\n  return new Promise((resolve) => {\n    // chame resolve depois de ms\n  })\n}\n\nawait esperar(100)\nconsole.log(\"pronto\")\n",
+    "solution": "function esperar(ms) {\n  return new Promise((resolve) => setTimeout(resolve, ms))\n}\nawait esperar(100)\nconsole.log(\"pronto\")",
+    "testCases": ["pronto"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Promises e Async/Await",
+    "title": "Promise.all",
+    "description": "Três promessas resolvem com 1, 2 e 3. Use Promise.all para esperar todas e imprima os resultados separados por vírgula e espaço: 1, 2, 3",
+    "starterCode": "const p1 = Promise.resolve(1)\nconst p2 = Promise.resolve(2)\nconst p3 = Promise.resolve(3)\n\nconst resultados = []\nconsole.log(resultados.join(\", \"))\n",
+    "solution": "const p1 = Promise.resolve(1)\nconst p2 = Promise.resolve(2)\nconst p3 = Promise.resolve(3)\nconst resultados = await Promise.all([p1, p2, p3])\nconsole.log(resultados.join(\", \"))",
+    "testCases": ["1, 2, 3"],
+    "xpReward": 25
+  },
+  {
+    "lessonTitle": "Closures e Hoisting",
+    "title": "Contador com closure",
+    "description": "`criarContador()` deve devolver uma função que, a cada chamada, incrementa e retorna um contador privado. Chamada 3 vezes, imprime 1, 2, 3.",
+    "starterCode": "function criarContador() {\n  let contador = 0\n  // retorne uma função que incrementa e devolve contador\n}\n\nconst proximo = criarContador()\nconsole.log(proximo())\nconsole.log(proximo())\nconsole.log(proximo())\n",
+    "solution": "function criarContador() {\n  let contador = 0\n  return () => ++contador\n}\nconst proximo = criarContador()\nconsole.log(proximo())\nconsole.log(proximo())\nconsole.log(proximo())",
+    "testCases": ["1", "2", "3"],
+    "xpReward": 25
+  },
+  {
+    "lessonTitle": "Exercícios Async",
+    "title": "Erro com try/catch",
+    "description": "`buscar()` rejeita com Error(\"falhou\"). Envolva a chamada em try/catch, imprima \"Erro: \" + a mensagem, e depois imprima \"fim\".",
+    "starterCode": "async function buscar() {\n  throw new Error(\"falhou\")\n}\n\nawait buscar()\nconsole.log(\"fim\")\n",
+    "solution": "async function buscar() {\n  throw new Error(\"falhou\")\n}\ntry {\n  await buscar()\n} catch (e) {\n  console.log(\"Erro: \" + e.message)\n}\nconsole.log(\"fim\")",
+    "testCases": ["Erro: falhou", "fim"],
+    "xpReward": 25
+  },
+  {
+    "lessonTitle": "Exercícios Async",
+    "title": "Encadeando then",
+    "description": "Partindo de Promise.resolve(2), encadeie um .then que multiplica por 3 e outro que imprime o resultado.",
+    "starterCode": "// o await no início faz o console esperar a cadeia terminar\nawait Promise.resolve(2)\n  // .then(...)\n  // .then(...)\n",
+    "solution": "await Promise.resolve(2)\n  .then((x) => x * 3)\n  .then((x) => console.log(x))",
+    "testCases": ["6"],
+    "xpReward": 20
+  },
+
+  {
+    "lessonTitle": "Middleware e Erros",
+    "title": "Pipeline de middlewares",
+    "description": "Implemente `executar(middlewares)`: chama cada middleware passando `next`, que avança para o próximo. A ordem de impressão deve ser auth, log, handler.",
+    "starterCode": "const middlewares = [\n  (next) => { console.log(\"auth\"); next() },\n  (next) => { console.log(\"log\"); next() },\n  () => { console.log(\"handler\") },\n]\n\nfunction executar(lista) {\n  // dica: uma função recursiva que chama lista[i] com next = () => avançar(i + 1)\n}\n\nexecutar(middlewares)\n",
+    "solution": "const middlewares = [\n  (next) => { console.log(\"auth\"); next() },\n  (next) => { console.log(\"log\"); next() },\n  () => { console.log(\"handler\") },\n]\nfunction executar(lista) {\n  const avancar = (i) => { if (lista[i]) lista[i](() => avancar(i + 1)) }\n  avancar(0)\n}\nexecutar(middlewares)",
+    "testCases": ["auth", "log", "handler"],
+    "xpReward": 30
+  },
+  {
+    "lessonTitle": "Projeto: API de Tarefas",
+    "title": "Filtrar concluídas",
+    "description": "Imprima os títulos das tarefas concluídas, separados por vírgula e espaço.",
+    "starterCode": "const tarefas = [\n  { id: 1, titulo: \"Estudar\", concluida: true },\n  { id: 2, titulo: \"Dormir\", concluida: false },\n  { id: 3, titulo: \"Treinar\", concluida: true },\n]\n\nconsole.log()\n",
+    "solution": "const tarefas = [\n  { id: 1, titulo: \"Estudar\", concluida: true },\n  { id: 2, titulo: \"Dormir\", concluida: false },\n  { id: 3, titulo: \"Treinar\", concluida: true },\n]\nconsole.log(tarefas.filter((t) => t.concluida).map((t) => t.titulo).join(\", \"))",
+    "testCases": ["Estudar, Treinar"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Projeto: API de Tarefas",
+    "title": "Próximo id",
+    "description": "`proximoId(tarefas)` deve devolver o maior id + 1 (ou 1 se a lista estiver vazia). Imprima para a lista dada e para uma lista vazia.",
+    "starterCode": "const tarefas = [{ id: 1 }, { id: 2 }, { id: 5 }]\n\nfunction proximoId(lista) {\n  \n}\n\nconsole.log(proximoId(tarefas))\nconsole.log(proximoId([]))\n",
+    "solution": "const tarefas = [{ id: 1 }, { id: 2 }, { id: 5 }]\nfunction proximoId(lista) {\n  return lista.length ? Math.max(...lista.map((t) => t.id)) + 1 : 1\n}\nconsole.log(proximoId(tarefas))\nconsole.log(proximoId([]))",
+    "testCases": ["6", "1"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Testando sua API",
+    "title": "Validar payload",
+    "description": "`validar(body)` devolve \"ok\" quando `titulo` é uma string não vazia, senão \"titulo obrigatorio\". Imprima o resultado das duas chamadas.",
+    "starterCode": "function validar(body) {\n  \n}\n\nconsole.log(validar({ titulo: \"Estudar\" }))\nconsole.log(validar({ titulo: \"\" }))\n",
+    "solution": "function validar(body) {\n  return typeof body.titulo === \"string\" && body.titulo.trim() ? \"ok\" : \"titulo obrigatorio\"\n}\nconsole.log(validar({ titulo: \"Estudar\" }))\nconsole.log(validar({ titulo: \"\" }))",
+    "testCases": ["ok", "titulo obrigatorio"],
+    "xpReward": 20
+  },
+
+  {
+    "lessonTitle": "Componentes e JSX",
+    "title": "Lista em texto",
+    "description": "Antes do JSX, entenda o map: `renderLista(itens)` deve devolver a string <ul><li>a</li><li>b</li></ul> para [\"a\", \"b\"].",
+    "starterCode": "function renderLista(itens) {\n  \n}\n\nconsole.log(renderLista([\"a\", \"b\"]))\n",
+    "solution": "function renderLista(itens) {\n  return `<ul>${itens.map((i) => `<li>${i}</li>`).join(\"\")}</ul>`\n}\nconsole.log(renderLista([\"a\", \"b\"]))",
+    "testCases": ["<ul><li>a</li><li>b</li></ul>"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Props e Estado (State)",
+    "title": "Atualização imutável",
+    "description": "Crie `novo` a partir de `estado` com contador + 1 SEM alterar `estado` (spread). Deve imprimir 0 e depois 1.",
+    "starterCode": "const estado = { contador: 0, tema: \"dark\" }\n\nconst novo = estado // errado: mesma referência\nnovo.contador = 1\n\nconsole.log(estado.contador)\nconsole.log(novo.contador)\n",
+    "solution": "const estado = { contador: 0, tema: \"dark\" }\nconst novo = { ...estado, contador: estado.contador + 1 }\nconsole.log(estado.contador)\nconsole.log(novo.contador)",
+    "testCases": ["0", "1"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Props e Estado (State)",
+    "title": "Reducer de contador",
+    "description": "Implemente `reducer(state, action)` com actions \"inc\" e \"dec\". Aplicando inc, inc, dec, inc ao estado 0, imprima o resultado final.",
+    "starterCode": "function reducer(state, action) {\n  \n}\n\nconst acoes = [\"inc\", \"inc\", \"dec\", \"inc\"]\nconst final = acoes.reduce(reducer, 0)\nconsole.log(final)\n",
+    "solution": "function reducer(state, action) {\n  if (action === \"inc\") return state + 1\n  if (action === \"dec\") return state - 1\n  return state\n}\nconst acoes = [\"inc\", \"inc\", \"dec\", \"inc\"]\nconsole.log(acoes.reduce(reducer, 0))",
+    "testCases": ["2"],
+    "xpReward": 25
+  },
+  {
+    "lessonTitle": "Projeto: Mini SPA React",
+    "title": "Tarefas sem mutar",
+    "description": "Sem usar push/splice: adicione \"c\" à lista (spread) e depois remova \"a\" (filter). Imprima o tamanho após cada passo.",
+    "starterCode": "const lista = [\"a\", \"b\"]\n\nconst comNova = lista\nconsole.log(comNova.length)\n\nconst semA = comNova\nconsole.log(semA.length)\n",
+    "solution": "const lista = [\"a\", \"b\"]\nconst comNova = [...lista, \"c\"]\nconsole.log(comNova.length)\nconst semA = comNova.filter((x) => x !== \"a\")\nconsole.log(semA.length)",
+    "testCases": ["3", "2"],
+    "xpReward": 20
+  },
+
+  {
+    "lessonTitle": "Tipos de Dados e Variaveis",
+    "title": "Conversão de tipos",
+    "description": "`idade` chegou como texto. Converta para inteiro, some 5 e imprima. Depois imprima o nome do tipo original com type(idade).__name__.",
+    "starterCode": "idade = \"25\"\n\nprint()\nprint()\n",
+    "solution": "idade = \"25\"\nprint(int(idade) + 5)\nprint(type(idade).__name__)",
+    "testCases": ["30", "str"],
+    "xpReward": 15
+  },
+  {
+    "lessonTitle": "Listas, Tuplas e Dicionarios",
+    "title": "Filtrar pares",
+    "description": "Com list comprehension, crie a lista dos pares de 1 a 10 e imprima a lista.",
+    "starterCode": "pares = []\nprint(pares)\n",
+    "solution": "pares = [n for n in range(1, 11) if n % 2 == 0]\nprint(pares)",
+    "testCases": ["[2, 4, 6, 8, 10]"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Listas, Tuplas e Dicionarios",
+    "title": "Contar palavras",
+    "description": "Conte quantas vezes cada palavra aparece em \"zen code zen\" usando um dicionário e imprima o dicionário.",
+    "starterCode": "frase = \"zen code zen\"\ncontagem = {}\n\nprint(contagem)\n",
+    "solution": "frase = \"zen code zen\"\ncontagem = {}\nfor p in frase.split():\n    contagem[p] = contagem.get(p, 0) + 1\nprint(contagem)",
+    "testCases": ["{'zen': 2, 'code': 1}"],
+    "xpReward": 25
+  },
+  {
+    "lessonTitle": "Funcoes e Modulos",
+    "title": "Fatorial recursivo",
+    "description": "Implemente `fatorial(n)` de forma recursiva e imprima fatorial(5) e fatorial(0).",
+    "starterCode": "def fatorial(n):\n    pass\n\nprint(fatorial(5))\nprint(fatorial(0))\n",
+    "solution": "def fatorial(n):\n    return 1 if n <= 1 else n * fatorial(n - 1)\n\nprint(fatorial(5))\nprint(fatorial(0))",
+    "testCases": ["120", "1"],
+    "xpReward": 25
+  },
+  {
+    "lessonTitle": "POO em Python",
+    "title": "Classe Conta",
+    "description": "Complete `depositar` e `sacar`. Sacar mais do que o saldo imprime \"Saldo insuficiente\" e não altera o saldo. Depositar 100 e sacar 50 num saldo inicial 100 → 150; sacar 500 → mensagem.",
+    "starterCode": "class Conta:\n    def __init__(self, saldo):\n        self.saldo = saldo\n\n    def depositar(self, valor):\n        pass\n\n    def sacar(self, valor):\n        pass\n\nc = Conta(100)\nc.depositar(100)\nc.sacar(50)\nprint(c.saldo)\nc.sacar(500)\n",
+    "solution": "class Conta:\n    def __init__(self, saldo):\n        self.saldo = saldo\n\n    def depositar(self, valor):\n        self.saldo += valor\n\n    def sacar(self, valor):\n        if valor > self.saldo:\n            print(\"Saldo insuficiente\")\n            return\n        self.saldo -= valor\n\nc = Conta(100)\nc.depositar(100)\nc.sacar(50)\nprint(c.saldo)\nc.sacar(500)",
+    "testCases": ["150", "Saldo insuficiente"],
+    "xpReward": 30
+  },
+  {
+    "lessonTitle": "Exercicio: API de Tarefas",
+    "title": "Tarefas concluídas",
+    "description": "Imprima, uma por linha, os títulos das tarefas com concluida=True.",
+    "starterCode": "tarefas = [\n    {\"id\": 1, \"titulo\": \"Estudar\", \"concluida\": True},\n    {\"id\": 2, \"titulo\": \"Dormir\", \"concluida\": False},\n    {\"id\": 3, \"titulo\": \"Treinar\", \"concluida\": True},\n]\n\n",
+    "solution": "tarefas = [\n    {\"id\": 1, \"titulo\": \"Estudar\", \"concluida\": True},\n    {\"id\": 2, \"titulo\": \"Dormir\", \"concluida\": False},\n    {\"id\": 3, \"titulo\": \"Treinar\", \"concluida\": True},\n]\nfor t in tarefas:\n    if t[\"concluida\"]:\n        print(t[\"titulo\"])",
+    "testCases": ["Estudar", "Treinar"],
+    "xpReward": 20
   }
 ]
