@@ -5,6 +5,9 @@ import { prisma } from '@/lib/db'
 import { canAccessModule } from '@/lib/access'
 import LessonClient from './LessonClient'
 
+// Linguagem do console por módulo (sql = sqlite em memória dentro do Pyodide, dataset fixo no worker)
+const LANGUAGE_BY_MODULE: Record<string, string> = { python: 'python', 'banco-dados': 'sql' }
+
 export default async function LessonPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const session = await getServerSession(authOptions)
@@ -70,7 +73,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
         xpReward: e.xpReward,
         // gabarito (solution/testCases) NÃO vai pro client — validação é em /api/progress/exercise
         // ponytail: linguagem pelo slug do módulo; coluna Exercise.language quando um módulo misturar
-        language: lesson.module.slug === 'python' ? 'python' : 'javascript',
+        language: LANGUAGE_BY_MODULE[lesson.module.slug] ?? 'javascript',
       }))}
       courseSlug={lesson.module.course.slug}
       prevLessonId={prevLesson?.id ?? null}

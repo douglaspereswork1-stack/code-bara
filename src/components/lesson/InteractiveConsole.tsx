@@ -37,7 +37,11 @@ function detectHints(code: string, errorText: string, hints: string[], language:
   const errLower = errorText.toLowerCase()
   const isPython = language === 'python'
 
-  if (isPython) {
+  if (language === 'sql') {
+    if (errLower.includes('no such table')) suggestions.push('💡 Tabela não existe — as disponíveis são alunos, cursos e matriculas.')
+    if (errLower.includes('no such column')) suggestions.push('💡 Coluna não existe — confira o nome na descrição do exercício.')
+    if (errLower.includes('syntax error')) suggestions.push('💡 Erro de sintaxe SQL — verifique vírgulas entre colunas e a ordem SELECT … FROM … WHERE … ORDER BY.')
+  } else if (isPython) {
     if (!lower.includes('print(') && !lower.includes('print (')) {
       suggestions.push('💡 Você não usou print() — sem ele nada aparece no console!')
     }
@@ -102,8 +106,10 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
   const workerRef = useRef<Worker | null>(null)
 
   const isPython = language === 'python'
+  const isSql = language === 'sql'
   const isMobile = useIsMobile()
-  const timeoutMs = isPython ? PY_TIMEOUT_MS : JS_TIMEOUT_MS
+  // Python e SQL rodam no Pyodide — mesmo custo de carga
+  const timeoutMs = isPython || isSql ? PY_TIMEOUT_MS : JS_TIMEOUT_MS
 
   const totalHints = hints.length
   const showHintButton = totalHints > 0 || autoHints.length > 0
@@ -155,8 +161,8 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
     }
     worker.onerror = (e) => { lines.push({ type: 'error', text: `❌ ${e.message}` }); finish(e.message) }
     arm()
-    worker.postMessage({ type: 'run', lang: isPython ? 'python' : 'javascript', code: codeStr })
-  }), [isPython, timeoutMs])
+    worker.postMessage({ type: 'run', lang: isPython ? 'python' : isSql ? 'sql' : 'javascript', code: codeStr })
+  }), [isPython, isSql, timeoutMs])
 
   const runCode = useCallback(async () => {
     setRunning(true)
@@ -243,9 +249,9 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
           <span className="text-xs font-bold uppercase tracking-wider text-[#C4B5FD]">
             Console Interativo
           </span>
-          {isPython && (
+          {(isPython || isSql) && (
             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#3572A5]/20 text-[#6DB0E8] border border-[#3572A5]/30">
-              Python
+              {isSql ? 'SQL' : 'Python'}
             </span>
           )}
         </div>
@@ -311,7 +317,7 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
             value={code}
             onChange={(e) => setCode(e.target.value)}
             className="w-full h-[200px] p-4 bg-[#1E1E1E] text-[#D4D4D4] font-mono text-[13px] leading-relaxed resize-none focus:outline-none placeholder:text-[#64748B]"
-            placeholder={isPython ? '# Escreva seu código Python aqui...' : '// Escreva seu código JavaScript aqui...'}
+            placeholder={isPython ? '# Escreva seu código Python aqui...' : isSql ? '-- Escreva sua query SQL aqui...' : '// Escreva seu código JavaScript aqui...'}
             spellCheck={false}
             autoCapitalize="off"
             autoCorrect="off"
@@ -319,7 +325,7 @@ export function InteractiveConsole({ code: initialCode, language = 'javascript',
         ) : (
           <div className="h-[200px]">
             <Editor
-              language={isPython ? 'python' : language}
+              language={language}
               value={code}
               onChange={(v) => setCode(v ?? '')}
               theme="vs-dark"

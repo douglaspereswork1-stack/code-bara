@@ -236,5 +236,87 @@
     "solution": "tarefas = [\n    {\"id\": 1, \"titulo\": \"Estudar\", \"concluida\": True},\n    {\"id\": 2, \"titulo\": \"Dormir\", \"concluida\": False},\n    {\"id\": 3, \"titulo\": \"Treinar\", \"concluida\": True},\n]\nfor t in tarefas:\n    if t[\"concluida\"]:\n        print(t[\"titulo\"])",
     "testCases": ["Estudar", "Treinar"],
     "xpReward": 20
+  },
+
+  {
+    "lessonTitle": "SQL Basico",
+    "title": "Listar alunos",
+    "description": "Tabela alunos(id, nome, cidade, idade). Selecione o nome de todos os alunos em ordem alfabética.",
+    "starterCode": "-- tabelas: alunos(id, nome, cidade, idade), cursos(id, titulo, preco), matriculas(id, aluno_id, curso_id, nota)\nSELECT \n",
+    "solution": "SELECT nome FROM alunos ORDER BY nome",
+    "testCases": ["Ana", "Bruno", "Carla", "Diego"],
+    "xpReward": 15
+  },
+  {
+    "lessonTitle": "SQL Basico",
+    "title": "Filtrar por cidade",
+    "description": "Selecione o nome dos alunos que moram em 'São Paulo', em ordem alfabética.",
+    "starterCode": "SELECT nome FROM alunos\nWHERE \n",
+    "solution": "SELECT nome FROM alunos WHERE cidade = 'São Paulo' ORDER BY nome",
+    "testCases": ["Ana", "Carla"],
+    "xpReward": 15
+  },
+  {
+    "lessonTitle": "SQL Basico",
+    "title": "Aluno mais velho",
+    "description": "Selecione nome e idade do aluno mais velho (ORDER BY … DESC + LIMIT).",
+    "starterCode": "SELECT nome, idade FROM alunos\n",
+    "solution": "SELECT nome, idade FROM alunos ORDER BY idade DESC LIMIT 1",
+    "testCases": ["Bruno | 31"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "SQL Basico",
+    "title": "Inserir curso",
+    "description": "Insira o curso (4, 'Node.js', 249.9) na tabela cursos e depois conte quantos cursos existem.",
+    "starterCode": "INSERT INTO cursos (id, titulo, preco) VALUES ();\nSELECT COUNT(*) FROM cursos;\n",
+    "solution": "INSERT INTO cursos (id, titulo, preco) VALUES (4, 'Node.js', 249.9);\nSELECT COUNT(*) FROM cursos;",
+    "testCases": ["4"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "JOINs e Relacionamentos",
+    "title": "Alunos por cidade",
+    "description": "Conte quantos alunos há em cada cidade (cidade, total), em ordem alfabética de cidade.",
+    "starterCode": "SELECT cidade, COUNT(*) FROM alunos\n",
+    "solution": "SELECT cidade, COUNT(*) FROM alunos GROUP BY cidade ORDER BY cidade",
+    "testCases": ["Curitiba | 1", "Rio de Janeiro | 1", "São Paulo | 2"],
+    "xpReward": 25
+  },
+  {
+    "lessonTitle": "JOINs e Relacionamentos",
+    "title": "Notas altas com JOIN",
+    "description": "Liste nome do aluno e título do curso das matrículas com nota >= 90, em ordem alfabética de nome. Precisa de dois JOINs.",
+    "starterCode": "SELECT a.nome, c.titulo\nFROM matriculas m\n\n",
+    "solution": "SELECT a.nome, c.titulo\nFROM matriculas m\nJOIN alunos a ON a.id = m.aluno_id\nJOIN cursos c ON c.id = m.curso_id\nWHERE m.nota >= 90\nORDER BY a.nome",
+    "testCases": ["Ana | JavaScript", "Carla | SQL"],
+    "xpReward": 30
+  },
+  {
+    "lessonTitle": "JOINs e Relacionamentos",
+    "title": "Média por curso",
+    "description": "Para cada curso, mostre o título e a média das notas (AVG), em ordem alfabética de título.",
+    "starterCode": "SELECT c.titulo, AVG(m.nota)\nFROM cursos c\n\n",
+    "solution": "SELECT c.titulo, AVG(m.nota)\nFROM cursos c\nJOIN matriculas m ON m.curso_id = c.id\nGROUP BY c.titulo\nORDER BY c.titulo",
+    "testCases": ["JavaScript | 80.0", "Python | 72.5", "SQL | 95.0"],
+    "xpReward": 30
+  },
+  {
+    "lessonTitle": "Exercicio: Modelagem e Queries",
+    "title": "Atualizar nota",
+    "description": "A matrícula de id 5 teve a nota corrigida para 75. Faça o UPDATE e depois selecione a nota dessa matrícula.",
+    "starterCode": "UPDATE matriculas SET \nSELECT nota FROM matriculas WHERE id = 5;\n",
+    "solution": "UPDATE matriculas SET nota = 75 WHERE id = 5;\nSELECT nota FROM matriculas WHERE id = 5;",
+    "testCases": ["75"],
+    "xpReward": 20
+  },
+  {
+    "lessonTitle": "Exercicio: Modelagem e Queries",
+    "title": "Quem faz JavaScript",
+    "description": "Liste o nome dos alunos matriculados no curso 'JavaScript', em ordem alfabética.",
+    "starterCode": "SELECT a.nome\nFROM alunos a\n\n",
+    "solution": "SELECT a.nome\nFROM alunos a\nJOIN matriculas m ON m.aluno_id = a.id\nJOIN cursos c ON c.id = m.curso_id\nWHERE c.titulo = 'JavaScript'\nORDER BY a.nome",
+    "testCases": ["Ana", "Bruno", "Carla"],
+    "xpReward": 25
   }
 ]
