@@ -4,7 +4,7 @@ import { Rocket, Flame } from 'lucide-react'
 
 export function WelcomeBanner() {
   const { data: session } = useSession()
-  const name = (session?.user?.name as string)?.split(' ')[0] || 'Douglas'
+  const name = session?.user?.name?.split(' ')[0] || 'Aluno'
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-[#22D3EE]/20 bg-gradient-to-br from-[#0D1528] via-[#0F1B3A] to-[#1A1040] p-6 md:p-7">

@@ -1,35 +1,37 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
+// Nome vem do cadastro (texto livre do aluno) e a página é servida no nosso domínio
+const esc = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
+
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions)
-  const userId = (session?.user as unknown as { id: string })?.id
+  const userId = (await getSessionUser())?.id
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
   const moduleId = searchParams.get('moduleId')
   if (!moduleId) return NextResponse.json({ error: 'moduleId required' }, { status: 400 })
 
-  const module = await prisma.module.findUnique({
+  const mod = await prisma.module.findUnique({
     where: { id: moduleId },
     include: {
       course: { select: { title: true } },
       lessons: { select: { id: true } },
     },
   })
-  if (!module) return NextResponse.json({ error: 'Module not found' }, { status: 404 })
+  if (!mod) return NextResponse.json({ error: 'Module not found' }, { status: 404 })
 
   const completedCount = await prisma.progress.count({
     where: {
       userId,
-      lessonId: { in: module.lessons.map(l => l.id) },
+      lessonId: { in: mod.lessons.map(l => l.id) },
       completed: true,
     },
   })
 
-  if (completedCount < module.lessons.length) {
+  if (mod.lessons.length === 0 || completedCount < mod.lessons.length) {
     return NextResponse.json({ error: 'Module not completed' }, { status: 400 })
   }
 
@@ -77,8 +79,8 @@ export async function GET(req: NextRequest) {
     <div class="badge">Certificado de Conclusão</div>
     <h1>Parabéns!</h1>
     <p class="subtitle">Você completou todas as aulas do módulo</p>
-    <div class="name">${user?.name || user?.email || 'Aluno'}</div>
-    <div class="module">${module.title} — ${module.course.title}</div>
+    <div class="name">${esc(user?.name || user?.email || 'Aluno')}</div>
+    <div class="module">${esc(mod.title)} — ${esc(mod.course.title)}</div>
     <div class="date">${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
   </div>
   <div class="footer">
@@ -92,7 +94,7 @@ export async function GET(req: NextRequest) {
   return new NextResponse(html, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
-      'Content-Disposition': `inline; filename="certificado-${module.slug}.html"`,
+      'Content-Disposition': `inline; filename="certificado-${mod.slug}.html"`,
     },
   })
 }

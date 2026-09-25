@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { CheckCircle, Circle, Clock, Zap, ChevronRight, Code2, Sparkles, Award, HelpCircle, Lock } from 'lucide-react'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { canAccessModule, isFreeModule } from '@/lib/access'
 
@@ -17,9 +16,9 @@ const TYPE_LABELS: Record<string, { label: string; icon: string; color: string }
 }
 
 export default async function CoursePage() {
-  const session = await getServerSession(authOptions)
-  const userId = (session?.user as unknown as { id: string })?.id
-  const isPaid = Boolean((session?.user as unknown as { isPaid?: boolean })?.isPaid)
+  const user = await getSessionUser()
+  const userId = user?.id
+  const isPaid = Boolean(user?.isPaid)
 
   const course = await prisma.course.findUnique({
     where: { slug: 'dev-fullstack' },

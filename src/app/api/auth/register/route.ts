@@ -1,11 +1,14 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { hash } from 'bcryptjs'
+import { normalizeEmail } from '@/lib/auth'
 
 export async function POST(req: NextRequest) {
-  const { name, email, password } = await req.json()
+  const body = await req.json()
+  const { name, password } = body
+  const email = typeof body.email === 'string' ? normalizeEmail(body.email) : ''
 
-  if (!email || !password || !name) {
+  if (!email || typeof password !== 'string' || typeof name !== 'string' || !name.trim()) {
     return NextResponse.json({ error: 'Nome, email e senha obrigatórios' }, { status: 400 })
   }
 
@@ -22,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   const user = await prisma.user.create({
     data: {
-      name,
+      name: name.trim(),
       email,
       passwordHash,
     },

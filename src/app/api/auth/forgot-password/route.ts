@@ -1,10 +1,12 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { sendResetEmail } from '@/lib/email'
+import { normalizeEmail } from '@/lib/auth'
 import crypto from 'crypto'
 
 export async function POST(req: NextRequest) {
-  const { email } = await req.json()
+  const body = await req.json()
+  const email = typeof body.email === 'string' ? normalizeEmail(body.email) : ''
 
   if (!email) {
     return NextResponse.json({ error: 'Email obrigatório' }, { status: 400 })

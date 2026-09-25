@@ -14,7 +14,7 @@ const POLL_MAX = 40 // ~2 min
 
 export default function PagamentoSucesso() {
   const { data: session, status, update } = useSession()
-  const isPaid = Boolean((session?.user as { isPaid?: boolean } | undefined)?.isPaid)
+  const isPaid = Boolean(session?.user?.isPaid)
   const tries = useRef(0)
   const [timedOut, setTimedOut] = useState(false)
 

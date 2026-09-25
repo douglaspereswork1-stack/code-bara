@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { canAccessModule } from '@/lib/access'
 import { outputMatches, parseExpected } from '@/lib/exercise'
@@ -10,9 +9,8 @@ import { touchStreak } from '@/lib/streak'
 // ponytail: output é auto-reportado pelo browser (dá pra colar a resposta) — executar no
 // servidor exige sandbox (Vercel Sandbox). Fecha o buraco que importa: XP arbitrário / exercício inexistente.
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions)
-  const user = session?.user as unknown as { id?: string; isPaid?: boolean } | undefined
-  if (!user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await getSessionUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const userId = user.id
 
   const { exerciseId, output } = await req.json()
@@ -25,7 +23,7 @@ export async function POST(req: NextRequest) {
     include: { lesson: { select: { module: { select: { order: true } } } } },
   })
   if (!exercise) return NextResponse.json({ error: 'Exercise not found' }, { status: 404 })
-  if (!canAccessModule(exercise.lesson.module.order, Boolean(user.isPaid))) {
+  if (!canAccessModule(exercise.lesson.module.order, user.isPaid)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
@@ -43,12 +41,11 @@ export async function POST(req: NextRequest) {
 
   awarded.push(exerciseId)
   const total = xpRecord.total + exercise.xpReward
-  const level = Math.floor(total / 500) + 1
   await prisma.xpRecord.update({
     where: { userId },
-    data: { total, level, awardedExercises: JSON.stringify(awarded) },
+    data: { total, awardedExercises: JSON.stringify(awarded) },
   })
   await touchStreak(userId)
 
-  return NextResponse.json({ ok: true, passed: true, xpEarned: exercise.xpReward, total, level })
+  return NextResponse.json({ ok: true, passed: true, xpEarned: exercise.xpReward, total })
 }

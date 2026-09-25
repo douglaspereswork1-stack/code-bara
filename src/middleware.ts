@@ -28,16 +28,13 @@ export async function middleware(request: NextRequest) {
   // Só estas rotas exigem pagamento aqui. /dashboard, /curso, /aula, /quiz e /settings abrem
   // pra qualquer logado — o módulo grátis é liberado e o resto é trancado NA PÁGINA
   // (src/lib/access.ts), porque o middleware não enxerga a que módulo a aula pertence.
-  const protectedRoutes = PAID_ONLY_PREFIXES
-  const isProtectedRoute = protectedRoutes.some(
+  const isProtectedRoute = PAID_ONLY_PREFIXES.some(
     (route) => pathname === route || pathname.startsWith(route + '/')
   )
 
   if (logged && isProtectedRoute) {
-    // Verifica isPaid via JWT (colocado no callback do auth)
-    const isPaid = (token as unknown as { isPaid?: boolean }).isPaid
-
-    if (!isPaid) {
+    // isPaid vem do JWT (callback jwt em lib/auth.ts)
+    if (!token?.isPaid) {
       return NextResponse.redirect(new URL('/pagamento', request.url))
     }
   }

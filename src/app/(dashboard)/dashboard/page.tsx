@@ -1,6 +1,5 @@
 import { Flame, Star, TrendingUp, Target } from 'lucide-react'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { WelcomeBanner } from '@/components/dashboard/WelcomeBanner'
 import { StatsCard } from '@/components/dashboard/StatsCard'
@@ -9,8 +8,7 @@ import { XpChart } from '@/components/dashboard/XpChart'
 import { RightWidgets } from '@/components/dashboard/RightWidgets'
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions)
-  const userId = (session?.user as unknown as { id: string })?.id
+  const userId = (await getSessionUser())?.id
 
   let stats = {
     streak: 0,

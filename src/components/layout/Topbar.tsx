@@ -9,8 +9,8 @@ export function Topbar() {
   const [q, setQ] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const name = (session?.user?.name as string) || 'Douglas'
-  const email = (session?.user?.email as string) || ''
+  const name = session?.user?.name || 'Aluno'
+  const email = session?.user?.email || ''
   const initial = name.charAt(0).toUpperCase()
 
   return (

@@ -5,7 +5,7 @@ import { hash } from 'bcryptjs'
 export async function POST(req: NextRequest) {
   const { token, password } = await req.json()
 
-  if (!token || !password) {
+  if (typeof token !== 'string' || typeof password !== 'string' || !token) {
     return NextResponse.json({ error: 'Token e senha obrigatórios' }, { status: 400 })
   }
 

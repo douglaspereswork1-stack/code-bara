@@ -1,13 +1,13 @@
 import { notFound, redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { canAccessModule } from '@/lib/access'
+import { parseQuizOptions } from '@/lib/quiz'
 import QuizClient from './QuizClient'
 
 export default async function QuizPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const session = await getServerSession(authOptions)
+  const user = await getSessionUser()
 
   const quiz = await prisma.quiz.findUnique({
     where: { id },
@@ -23,8 +23,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
 
   if (!quiz) notFound()
 
-  const isPaid = Boolean((session?.user as unknown as { isPaid?: boolean })?.isPaid)
-  if (!canAccessModule(quiz.module.order, isPaid)) redirect('/pagamento?bloqueado=quiz')
+  if (!canAccessModule(quiz.module.order, Boolean(user?.isPaid))) redirect('/pagamento?bloqueado=quiz')
 
   return (
     <QuizClient
@@ -33,15 +32,13 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
         title: quiz.title,
         passingScore: quiz.passingScore,
         xpReward: quiz.xpReward,
+        // só o texto: `correct` e a explicação vêm na resposta do POST /api/quiz
         questions: quiz.questions.map(q => ({
           id: q.id,
           question: q.question,
-          options: q.options as unknown as string[],
-          explanation: q.explanation,
-          order: q.order,
+          options: parseQuizOptions(q.options).map(o => o.text),
         })),
       }}
-      moduleSlug={quiz.module.slug}
       courseSlug={quiz.module.course.slug}
     />
   )

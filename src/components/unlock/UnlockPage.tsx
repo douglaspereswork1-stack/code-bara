@@ -19,7 +19,7 @@ export function UnlockPage() {
 
   // Quem chega com cookie velho mas já pagou (webhook processou depois do redirect do MP)
   useEffect(() => {
-    if ((session?.user as { isPaid?: boolean } | undefined)?.isPaid) router.replace('/dashboard')
+    if (session?.user?.isPaid) router.replace('/dashboard')
   }, [session, router])
 
   async function handlePay() {

@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { mp, MP_PRICE, MP_TITLE } from '@/lib/mercadopago'
 import { Preference } from 'mercadopago'
 
 export async function POST() {
-  const session = await getServerSession(authOptions)
-  const userId = (session?.user as unknown as { id: string })?.id
+  const userId = (await getSessionUser())?.id
 
   if (!userId) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })

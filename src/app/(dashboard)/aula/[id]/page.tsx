@@ -1,6 +1,5 @@
 import { notFound, redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { canAccessModule } from '@/lib/access'
 import LessonClient from './LessonClient'
@@ -10,8 +9,8 @@ const LANGUAGE_BY_MODULE: Record<string, string> = { python: 'python', 'banco-da
 
 export default async function LessonPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const session = await getServerSession(authOptions)
-  const userId = (session?.user as unknown as { id: string })?.id
+  const user = await getSessionUser()
+  const userId = user?.id
 
   const lesson = await prisma.lesson.findUnique({
     where: { id },
@@ -37,8 +36,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
   if (!lesson) notFound()
 
   // Paywall por módulo (o middleware só barra rotas 100% pagas)
-  const isPaid = Boolean((session?.user as unknown as { isPaid?: boolean })?.isPaid)
-  if (!canAccessModule(lesson.module.order, isPaid)) redirect('/pagamento?bloqueado=aula')
+  if (!canAccessModule(lesson.module.order, Boolean(user?.isPaid))) redirect('/pagamento?bloqueado=aula')
 
   // Flatten all lessons across all modules for prev/next navigation
   const allLessons = lesson.module.course.modules.flatMap(m => m.lessons)

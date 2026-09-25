@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, CheckCircle, XCircle, Trophy, RotateCcw, Zap } from 'lucide-react'
 
@@ -8,8 +8,16 @@ type Question = {
   id: string
   question: string
   options: string[]
-  explanation: string | null
-  order: number
+}
+
+// Resposta do POST /api/quiz — gabarito e XP só existem depois do envio
+type QuizResult = {
+  score: number
+  passed: boolean
+  correct: number
+  total: number
+  xpEarned: number
+  review: { correctIdx: number; explanation: string | null }[]
 }
 
 type QuizData = {
@@ -22,54 +30,48 @@ type QuizData = {
 
 type Props = {
   quiz: QuizData
-  moduleSlug: string
   courseSlug: string
 }
 
-export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
+export default function QuizClient({ quiz, courseSlug }: Props) {
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
   const [answers, setAnswers] = useState<(number | null)[]>(new Array(quiz.questions.length).fill(null))
-  const [showResult, setShowResult] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [score, setScore] = useState(0)
-  const [xpEarned, setXpEarned] = useState(0)
-  const [saved, setSaved] = useState(false)
+  const [result, setResult] = useState<QuizResult | null>(null)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const q = quiz.questions[current]
   const total = quiz.questions.length
   const answered = answers.filter(a => a !== null).length
 
-  const calcScore = useCallback(() => {
-    let correct = 0
-    quiz.questions.forEach((question, i) => {
-      const correctIdx = JSON.parse(question.options as unknown as string).findIndex((o: { correct: boolean }) => o.correct)
-      if (answers[i] === correctIdx) correct++
-    })
-    return Math.round((correct / total) * 100)
-  }, [quiz.questions, answers, total])
-
   async function submitQuiz() {
-    const s = calcScore()
-    setScore(s)
-    const passed = s >= quiz.passingScore
-    const xp = passed ? quiz.xpReward : Math.round(quiz.xpReward * 0.3)
-    setXpEarned(xp)
-    setShowResult(true)
-    setSubmitted(true)
-
+    setSending(true)
+    setError(null)
     try {
-      await fetch('/api/quiz', {
+      const res = await fetch('/api/quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quizId: quiz.id, score: s, answers, xpEarned: xp }),
+        body: JSON.stringify({ quizId: quiz.id, answers }),
       })
-      setSaved(true)
-    } catch { /* ignore */ }
+      if (!res.ok) throw new Error(String(res.status))
+      setResult(await res.json())
+    } catch {
+      setError('Não foi possível enviar o quiz. Tente de novo.')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  function retry() {
+    setCurrent(0)
+    setSelected(null)
+    setAnswers(new Array(total).fill(null))
+    setResult(null)
   }
 
   function selectOption(idx: number) {
-    if (submitted) return
+    if (result) return
     setSelected(idx)
     const newAnswers = [...answers]
     newAnswers[current] = idx
@@ -90,8 +92,8 @@ export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
     }
   }
 
-  if (showResult) {
-    const passed = score >= quiz.passingScore
+  if (result) {
+    const { passed, score, xpEarned } = result
     return (
       <div className="max-w-2xl mx-auto p-6 space-y-6">
         <div className="text-center space-y-4">
@@ -114,10 +116,7 @@ export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
             <div className="text-xs text-[#64748B] mt-1">XP ganho</div>
           </div>
           <div className="rounded-xl bg-[#0D1528] border border-white/[0.06] p-4 text-center">
-            <div className="text-3xl font-black text-white">{answers.filter((a, i) => {
-              const correctIdx = JSON.parse(quiz.questions[i].options as unknown as string).findIndex((o: { correct: boolean }) => o.correct)
-              return a === correctIdx
-            }).length}/{total}</div>
+            <div className="text-3xl font-black text-white">{result.correct}/{result.total}</div>
             <div className="text-xs text-[#64748B] mt-1">Corretas</div>
           </div>
         </div>
@@ -126,8 +125,7 @@ export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
         <div className="space-y-3">
           <h2 className="text-lg font-bold text-white">Revisão</h2>
           {quiz.questions.map((question, i) => {
-            const options = JSON.parse(question.options as unknown as string)
-            const correctIdx = options.findIndex((o: { correct: boolean }) => o.correct)
+            const { correctIdx, explanation } = result.review[i]
             const wasCorrect = answers[i] === correctIdx
             return (
               <div key={question.id} className={`rounded-xl border p-4 ${wasCorrect ? 'border-[#10B981]/20 bg-[#10B981]/5' : 'border-[#F97316]/20 bg-[#F97316]/5'}`}>
@@ -137,12 +135,12 @@ export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
                     <p className="text-sm font-medium text-white">{question.question}</p>
                     {!wasCorrect && (
                       <p className="text-xs text-[#94A3B8] mt-1">
-                        Sua resposta: <span className="text-[#F97316]">{answers[i] !== null ? options[answers[i]!]?.text : 'Nenhuma'}</span>
-                        {' • '}Correta: <span className="text-[#10B981]">{options[correctIdx]?.text}</span>
+                        Sua resposta: <span className="text-[#F97316]">{answers[i] !== null ? question.options[answers[i]!] : 'Nenhuma'}</span>
+                        {' • '}Correta: <span className="text-[#10B981]">{question.options[correctIdx]}</span>
                       </p>
                     )}
-                    {question.explanation && (
-                      <p className="text-xs text-[#22D3EE] mt-1 italic">{question.explanation}</p>
+                    {explanation && (
+                      <p className="text-xs text-[#22D3EE] mt-1 italic">{explanation}</p>
                     )}
                   </div>
                 </div>
@@ -156,7 +154,7 @@ export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
             Voltar ao Curso
           </Link>
           {!passed && (
-            <button onClick={() => { setCurrent(0); setSelected(null); setAnswers(new Array(total).fill(null)); setShowResult(false); setSubmitted(false); setScore(0) }} className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white hover:brightness-110 transition flex items-center gap-2">
+            <button onClick={retry} className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white hover:brightness-110 transition flex items-center gap-2">
               <RotateCcw className="w-4 h-4" /> Tentar Novamente
             </button>
           )}
@@ -194,9 +192,7 @@ export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
         <h2 className="text-lg font-semibold text-white">{q.question}</h2>
 
         <div className="space-y-3">
-          {(() => {
-            const options = JSON.parse(q.options as unknown as string)
-            return options.map((opt: { text: string; correct: boolean }, i: number) => (
+          {q.options.map((text, i) => (
               <button
                 key={i}
                 onClick={() => selectOption(i)}
@@ -212,13 +208,14 @@ export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
                   }`}>
                     {String.fromCharCode(65 + i)}
                   </span>
-                  {opt.text}
+                  {text}
                 </span>
               </button>
-            ))
-          })()}
+          ))}
         </div>
       </div>
+
+      {error && <p className="text-sm text-[#F97316] text-center">{error}</p>}
 
       {/* Navigation */}
       <div className="flex justify-between">
@@ -228,10 +225,10 @@ export default function QuizClient({ quiz, moduleSlug, courseSlug }: Props) {
         {current === total - 1 ? (
           <button
             onClick={submitQuiz}
-            disabled={answered < total}
+            disabled={answered < total || sending}
             className="px-6 py-2 rounded-lg bg-gradient-to-r from-[#10B981] to-[#22D3EE] text-white font-bold hover:brightness-110 transition disabled:opacity-30"
           >
-            Finalizar Quiz
+            {sending ? 'Enviando…' : 'Finalizar Quiz'}
           </button>
         ) : (
           <button onClick={next} className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white hover:brightness-110 transition">
