@@ -11,8 +11,10 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Rotas livres (sem autenticação necessária)
-  const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/api/auth', '/pagamento']
+  // Rotas livres (sem autenticação necessária).
+  // /api/payment/webhook é chamado pelo Mercado Pago, sem sessão — sem ele aqui o MP levava 307 pro /login
+  // e nenhuma venda era liberada (15/09 → 25/09). A rota se protege sozinha: busca o pagamento na API do MP.
+  const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/api/auth', '/pagamento', '/api/payment/webhook']
   const isPublicRoute = publicRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + '/')
   )
