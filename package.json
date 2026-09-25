@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "vitest run",
     "lint": "eslint",
     "postinstall": "prisma generate || exit 0",
     "db:seed": "npx tsx prisma/seed.ts",
