@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: "https://devfullstack-lilac.vercel.app",
+    url: "https://code-zen-br.vercel.app",
     siteName: "Code.Zen",
     title: "Code.Zen — Aprenda FullStack do Zero ao Emprego",
     description: "Plataforma de aprendizado FullStack com projetos práticos, quizzes interativos e gamificação.",
