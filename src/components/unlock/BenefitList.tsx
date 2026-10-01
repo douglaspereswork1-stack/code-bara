@@ -1,6 +1,7 @@
 import { CheckCircle2 } from 'lucide-react'
 
-const BENEFITS = ['25 módulos completos', '433+ exercícios práticos', '8+ projetos reais', 'Suporte da comunidade', '750h de conteúdo']
+// Números conferidos no banco (01/10/2026) — atualizar junto com o conteúdo, nunca à frente dele.
+export const BENEFITS = ['10 módulos', '65 aulas', '35 exercícios com correção automática', '3 projetos guiados', 'Quizzes, XP e certificado']
 
 export function BenefitList() {
   return (

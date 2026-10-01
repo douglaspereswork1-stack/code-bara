@@ -4,7 +4,7 @@ import { BenefitCard } from './BenefitCard'
 const ITEMS = [
   { index: '01', title: 'Aprendizado gamificado', text: 'Progrida através de desafios, conquistas e recompensas.', icon: Gamepad2 },
   { index: '02', title: 'Projetos reais', text: 'Construa projetos para praticar e desenvolver seu portfólio.', icon: FolderKanban },
-  { index: '03', title: 'Comunidade', text: 'Aprenda, compartilhe e evolua junto com outros desenvolvedores.', icon: Users },
+  { index: '03', title: 'Correção automática', text: 'Escreva código na aula e saiba na hora se acertou.', icon: Users },
   { index: '04', title: 'Em qualquer lugar', text: 'Estude no computador, tablet ou celular.', icon: MonitorSmartphone },
   { index: '05', title: 'Acesso vitalício', text: 'Uma única compra para continuar evoluindo.', icon: InfinityIcon },
 ]

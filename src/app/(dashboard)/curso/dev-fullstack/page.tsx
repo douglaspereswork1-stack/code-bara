@@ -99,7 +99,7 @@ export default async function CoursePage() {
         <Link href="/pagamento" className="flex flex-wrap items-center gap-3 rounded-2xl border border-[#FACC15]/30 bg-[#FACC15]/[0.06] p-4 hover:bg-[#FACC15]/10 transition">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FACC15]/15 text-[#FACC15] text-[11px] font-bold uppercase tracking-wide">🔥 Promoção de lançamento</span>
           <span className="text-sm text-white flex-1 min-w-[200px]">
-            O módulo 1 é <span className="font-bold text-[#10B981]">grátis</span>. Desbloqueie os outros {course.modules.filter(m => !isFreeModule(m.order)).length} módulos por <span className="font-black"><span className="text-[#FACC15]">12x</span> de R$ 75</span>
+            O módulo 1 é <span className="font-bold text-[#10B981]">grátis</span>. Desbloqueie os outros {course.modules.filter(m => !isFreeModule(m.order)).length} módulos por <span className="font-black text-[#FACC15]">R$ 299,90</span>
           </span>
           <span className="inline-flex items-center gap-1 text-sm font-bold text-[#FACC15]">Desbloquear <ChevronRight className="w-4 h-4" /></span>
         </Link>

@@ -9,9 +9,7 @@ export default function ComunidadePage() {
           <MessageCircle className="w-6 h-6 text-[#22D3EE]" />
         </div>
         <div className="font-semibold text-white mt-3">Em breve</div>
-        <p className="text-sm text-[#94A3B8] mt-1">Feed, dúvidas e code review entre alunos — alcateia em construção.</p>
-        <div className="mt-4 text-xs text-[#64748B]">Enquanto isso, use o Discord da turma.</div>
-      </div>
+        <p className="text-sm text-[#94A3B8] mt-1">Feed, dúvidas e code review entre alunos — alcateia em construção.</p>      </div>
     </div>
   )
 }

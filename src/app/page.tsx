@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { BENEFITS } from '@/components/unlock/BenefitList'
 import { BookOpen, Code2, Trophy, Zap, Sparkles, GraduationCap, Users, ShieldCheck, Gift, Play, ArrowRight, ChevronRight, Check, Lock, Star, Heart, Rocket, Terminal, Braces, Globe, Database, Cpu } from 'lucide-react'
 
 function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -50,14 +51,14 @@ export default function LandingPage() {
             </motion.h1>
 
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mt-5 text-sm lg:text-base leading-relaxed text-[#94A3B8] max-w-md">
-              25 módulos, 750h de conteúdo, projetos reais, debugging, testes e code review. Sem pressa, sem burnout.
+              10 módulos, 65 aulas, exercícios com correção automática e projetos guiados — do HTML ao deploy. Sem pressa, sem burnout.
             </motion.p>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-7 grid grid-cols-2 gap-3 max-w-md">
               {[
                 { icon: Zap, label: 'Do zero ao avançado' },
-                { icon: Code2, label: 'Projetos reais' },
-                { icon: Users, label: 'Comunidade ativa' },
+                { icon: Code2, label: 'Projetos guiados' },
+                { icon: Users, label: 'No seu ritmo' },
               ].map(s => (
                 <div key={s.label} className="flex items-center gap-2.5">
                   <span className="w-8 h-8 rounded-lg bg-[#22D3EE]/10 border border-[#22D3EE]/15 flex items-center justify-center shrink-0"><s.icon className="w-4 h-4 text-[#22D3EE]" /></span>
@@ -68,8 +69,8 @@ export default function LandingPage() {
 
             <motion.a href="#pagamento" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }} className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FACC15]/10 border border-[#FACC15]/40 hover:bg-[#FACC15]/15 transition">
               <span className="text-[10px] font-bold uppercase tracking-wide text-[#FACC15]">🔥 Promoção de lançamento</span>
-              <span className="text-sm font-black text-white"><span className="text-[#FACC15]">12x</span> de R$ 75</span>
-              <span className="text-xs text-[#94A3B8]">ou R$ 899,99 no Pix</span>
+              <span className="text-sm font-black text-white">R$ 299,90</span>
+              <span className="text-xs text-[#94A3B8]">no Pix ou em até 12x</span>
             </motion.a>
 
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mt-4 flex flex-wrap gap-3">
@@ -130,10 +131,10 @@ export default function LandingPage() {
         <Reveal>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { icon: BookOpen, value: '25', label: 'Módulos', sub: 'Do básico ao avançado' },
-              { icon: Code2, value: '433+', label: 'Exercícios', sub: 'Pratique de verdade' },
-              { icon: Trophy, value: '8+', label: 'Projetos', sub: 'Monte seu portfólio' },
-              { icon: Zap, value: '750+', label: 'Horas', sub: 'Conteúdo completo' },
+              { icon: BookOpen, value: '10', label: 'Módulos', sub: 'Do HTML ao deploy' },
+              { icon: Zap, value: '65', label: 'Aulas', sub: 'Teoria + prática' },
+              { icon: Code2, value: '35', label: 'Exercícios', sub: 'Com correção automática' },
+              { icon: Trophy, value: '3', label: 'Projetos', sub: 'Guiados, pro portfólio' },
             ].map((s, i) => (
               <Reveal key={s.label} delay={i * 0.1}>
                 <div className="rounded-2xl bg-[#0D1528] border border-white/[0.06] p-6 text-center hover:border-[#22D3EE]/20 transition group">
@@ -162,12 +163,12 @@ export default function LandingPage() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
-            { icon: Braces, title: 'Fundamentos', desc: 'HTML, CSS, JavaScript, lógica de programação e algoritmos.', color: '#22D3EE' },
-            { icon: Globe, title: 'Frontend Moderno', desc: 'React, Next.js, TypeScript, Tailwind CSS e design systems.', color: '#3B82F6' },
-            { icon: Database, title: 'Backend & Banco de Dados', desc: 'Node.js, APIs REST, SQL, Prisma e autenticação.', color: '#8B5CF6' },
-            { icon: Terminal, title: 'DevOps & Deploy', desc: 'Git, CI/CD, Docker, Vercel e monitoramento.', color: '#10B981' },
-            { icon: Rocket, title: 'Projetos Reais', desc: 'SaaS, e-commerce, dashboard — 8+ projetos pro portfólio.', color: '#F59E0B' },
-            { icon: Cpu, title: 'IA & Ferramentas', desc: 'Copilot, testes automatizados, code review e boas práticas.', color: '#EF4444' },
+            { icon: Braces, title: 'Fundamentos', desc: 'HTML, CSS, JavaScript e lógica de programação.', color: '#22D3EE' },
+            { icon: Globe, title: 'Frontend Moderno', desc: 'React, JSX, estado, hooks e rotas com Next.js.', color: '#3B82F6' },
+            { icon: Database, title: 'Backend & Banco de Dados', desc: 'Node.js, Express, APIs REST, Python, SQL e Prisma.', color: '#8B5CF6' },
+            { icon: Terminal, title: 'Git & DevOps', desc: 'Git, GitHub, Docker, CI/CD com GitHub Actions e deploy na Vercel.', color: '#10B981' },
+            { icon: Rocket, title: 'Projetos Guiados', desc: 'Landing page, API de tarefas e SPA em React pro portfólio.', color: '#F59E0B' },
+            { icon: Cpu, title: 'Carreira', desc: 'Portfólio, entrevista técnica, comunicação e estudo contínuo.', color: '#EF4444' },
           ].map((m, i) => (
             <Reveal key={m.title} delay={i * 0.08}>
               <div className="rounded-2xl bg-[#0D1528] border border-white/[0.06] p-6 hover:border-white/10 transition group h-full">
@@ -194,8 +195,8 @@ export default function LandingPage() {
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {[
             { icon: Heart, title: 'Sem burnout', desc: 'Aprenda no seu ritmo, como a capivara. Sem cobrança, sem pressão.' },
-            { icon: ShieldCheck, title: 'Projetos reais', desc: 'Não é só teoria — cada módulo tem projeto pra colocar no portfólio.' },
-            { icon: Users, title: 'Comunidade', desc: 'Grupo exclusivo pra tirar dúvidas, networking e motivação.' },
+            { icon: ShieldCheck, title: 'Projetos guiados', desc: 'Não é só teoria — landing page, API e SPA em React pra colocar no portfólio.' },
+            { icon: Terminal, title: 'Prática no navegador', desc: 'Console de código dentro da aula: escreva, rode e receba correção na hora.' },
             { icon: Star, title: 'Certificado', desc: 'Certificado de conclusão pra valorizar seu currículo e LinkedIn.' },
           ].map((f, i) => (
             <Reveal key={f.title} delay={i * 0.1}>
@@ -230,15 +231,14 @@ export default function LandingPage() {
                     🔥 Promoção de lançamento
                   </span>
                   <div className="mt-3 flex items-end justify-center gap-1.5">
-                    <span className="text-2xl font-black text-[#FACC15] leading-none mb-1">12x</span>
-                    <span className="text-5xl font-black text-white leading-none">R$ 75</span>
+                    <span className="text-5xl font-black text-white leading-none">R$ 299,90</span>
                   </div>
-                  <div className="text-sm text-[#94A3B8] mt-2">no cartão • ou <span className="text-white font-semibold">R$ 899,99</span> no Pix</div>
+                  <div className="text-sm text-[#94A3B8] mt-2">no Pix • ou em até <span className="text-white font-semibold">12x</span> no cartão</div>
                   <div className="text-xs text-[#64748B] mt-1">Pagamento único • Acesso vitalício</div>
                 </div>
 
                 <div className="mt-6 space-y-3 text-left">
-                  {['25 módulos completos', '433+ exercícios práticos', '8+ projetos reais', 'Suporte da comunidade', '750h de conteúdo'].map(f => (
+                  {BENEFITS.map(f => (
                     <div key={f} className="flex items-center gap-3">
                       <div className="w-5 h-5 rounded-full bg-[#10B981]/15 border border-[#10B981]/25 flex items-center justify-center shrink-0">
                         <Check className="w-3 h-3 text-[#10B981]" />

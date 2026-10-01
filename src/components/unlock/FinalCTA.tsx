@@ -13,7 +13,7 @@ export function FinalCTA({ onPay, loading }: Props) {
           Sua jornada Full Stack começa <span className="bg-gradient-to-r from-[#25E7F7] to-[#8B5CF6] bg-clip-text text-transparent">agora.</span>
         </h2>
         <p className="relative mt-3 text-[#94A3B8]">
-          <span className="text-[#F8FAFC] font-bold">12x de R$ 75</span> ou R$ 899,99 no Pix • Pagamento único • Acesso vitalício
+          <span className="text-[#F8FAFC] font-bold">R$ 299,90</span> no Pix ou em até 12x no cartão • Pagamento único • Acesso vitalício
         </p>
         <button
           type="button"
