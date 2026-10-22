@@ -14,8 +14,12 @@ export async function sendResetEmail({ to, resetUrl }: SendResetEmailParams) {
   const resend = new Resend(process.env.RESEND_API_KEY)
 
   try {
-    await resend.emails.send({
-      from: 'Code.Zen <noreply@codezen.dev>',
+    // resend.emails.send NÃO lança em erro de API: devolve { error }. Sem checar, a
+    // falha (ex.: domínio do remetente não verificado) passava como sucesso.
+    const { error } = await resend.emails.send({
+      // shortcut: onboarding@resend.dev só entrega pro e-mail dono da conta Resend;
+      // pra alunos, verificar um domínio no Resend e setar EMAIL_FROM na Vercel.
+      from: process.env.EMAIL_FROM || 'Code.Zen <onboarding@resend.dev>',
       to,
       subject: 'Recupere sua senha - Code.Zen',
       html: `
@@ -47,6 +51,10 @@ export async function sendResetEmail({ to, resetUrl }: SendResetEmailParams) {
       `,
     })
 
+    if (error) {
+      console.error('[email] Resend recusou o reset email:', error.name, error.message)
+      return { ok: false, error }
+    }
     return { ok: true }
   } catch (err) {
     console.error('[email] Erro ao enviar reset email:', err)
