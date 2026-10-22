@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { BENEFITS } from '@/components/unlock/BenefitList'
+import { HeroScene } from '@/components/landing/HeroScene'
 import { BookOpen, Code2, Trophy, Zap, Sparkles, GraduationCap, Users, ShieldCheck, Gift, Play, ArrowRight, ChevronRight, Check, Lock, Star, Heart, Rocket, Terminal, Braces, Globe, Database, Cpu } from 'lucide-react'
 
 function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -28,10 +29,7 @@ export default function LandingPage() {
       {/* ══════════ HERO ══════════ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-[#050914]" />
-        <div
-          className="absolute top-0 right-0 w-[75%] h-full bg-cover bg-top bg-no-repeat pointer-events-none opacity-80"
-          style={{ backgroundImage: 'url(/cena-completa.png)' }}
-        />
+        <HeroScene />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 w-[55%] h-full bg-gradient-to-r from-[#050914] via-[#050914] to-transparent" />
           <div className="absolute top-0 left-[35%] w-[25%] h-full bg-gradient-to-r from-[#050914]/70 to-transparent" />
@@ -84,7 +82,7 @@ export default function LandingPage() {
           </div>
 
           <div className="relative h-[400px] lg:h-[600px] overflow-visible hidden lg:block">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }} className="absolute top-[8%] left-0 flex flex-col gap-1 p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }} style={{ '--dur': '6.5s' } as React.CSSProperties} className="cz-drift absolute top-[8%] left-0 flex flex-col gap-1 p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30">
               <div className="flex items-center gap-2 text-xs text-[#94A3B8] font-medium">
                 <span className="inline-block w-4 h-3.5 rounded bg-[#3B82F6]/30 border border-[#3B82F6]/40" /> src <ChevronRight className="w-3 h-3 ml-auto text-[#64748B]" />
               </div>
@@ -96,7 +94,7 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="absolute top-[35%] left-[4%] p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30">
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} style={{ '--dur': '5.2s', '--delay': '-2s' } as React.CSSProperties} className="cz-drift absolute top-[35%] left-[4%] p-3 rounded-2xl bg-[#0D1528]/80 backdrop-blur-xl border border-[#22D3EE]/20 shadow-2xl z-30">
               <div className="text-[11px] font-mono leading-relaxed">
                 <span className="text-[#C084FC]">const</span> <span className="text-[#22D3EE]">app</span> <span className="text-[#64748B]">=</span> <span className="text-[#C084FC]">async</span> <span className="text-[#64748B]">() =&gt; {'{'}</span><br/>
                 <span className="text-[#64748B]">&nbsp;&nbsp;</span><span className="text-[#C084FC]">return</span> <span className="text-[#34D399]">&quot;🚀&quot;</span><br/>
@@ -104,7 +102,7 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="absolute bottom-[15%] right-[8%] z-30 text-right">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} style={{ '--dur': '7.4s', '--delay': '-4s' } as React.CSSProperties} className="cz-drift absolute bottom-[15%] right-[8%] z-30 text-right">
               <div className="flex flex-col items-end leading-none">
                 <span className="text-sm font-black text-[#22D3EE]">Código</span>
                 <span className="text-[10px] text-[#94A3B8] my-0.5">+</span>

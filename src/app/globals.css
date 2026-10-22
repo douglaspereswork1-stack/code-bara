@@ -140,8 +140,27 @@ html.light pre { background: #1E293B !important; color: #E2E8F0; }
 .cz-path-light { animation: cz-path-light 4s linear infinite; }
 .cz-particle { animation: cz-particle var(--dur, 9s) linear infinite; animation-delay: var(--delay, 0s); }
 .cz-token { animation: cz-token var(--dur, 7s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+/* ===== hero da landing (src/components/landing/HeroScene) =====
+   Só transform/opacity. Os -translate-* do Tailwind 4 usam a propriedade `translate`,
+   então glow/tela animam só opacity; os cartões de código flutuam por `translate` porque
+   o framer-motion já ocupa o `transform` deles na entrada. */
+@keyframes cz-bob { 0%, 100% { transform: translateY(0) rotate(-0.5deg); } 50% { transform: translateY(-5px) rotate(0.5deg); } }
+@keyframes cz-glow { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.85; } }
+@keyframes cz-screen { 0%, 100% { opacity: 0.35; } 12% { opacity: 0.6; } 20% { opacity: 0.4; } 47% { opacity: 0.65; } 55% { opacity: 0.45; } 80% { opacity: 0.55; } }
+@keyframes cz-ripple { 0% { transform: scale(0.85); opacity: 0; } 15% { opacity: 0.55; } 100% { transform: scale(1.3); opacity: 0; } }
+@keyframes cz-shimmer { 0% { transform: translateY(0); } 100% { transform: translateY(50%); } }
+@keyframes cz-drift { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
+.cz-bob { transform-origin: 50% 90%; animation: cz-bob 5.5s ease-in-out infinite; }
+.cz-glow { animation: cz-glow 2.6s ease-in-out infinite; }
+.cz-screen { animation: cz-screen 3.4s linear infinite; }
+.cz-ripple { animation: cz-ripple 6s ease-out infinite; opacity: 0; }
+.cz-shimmer { animation: cz-shimmer 9s linear infinite; }
+.cz-drift { animation: cz-drift var(--dur, 6s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+.cz-scene[data-paused] * { animation-play-state: paused; }
+
 @media (prefers-reduced-motion: reduce) {
-  .cz-float, .cz-breathe, .cz-path-light, .cz-particle, .cz-token { animation: none !important; }
+  .cz-float, .cz-breathe, .cz-path-light, .cz-particle, .cz-token,
+  .cz-bob, .cz-glow, .cz-screen, .cz-ripple, .cz-shimmer, .cz-drift { animation: none !important; }
 }
 
 /* highlight.js dentro do LessonMarkdown: o container já tem fundo/padding */
